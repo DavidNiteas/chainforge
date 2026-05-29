@@ -3,12 +3,18 @@ name = "chainforge-storage"
 version.workspace = true
 edition.workspace = true
 
+[features]
+default = []
+rocksdb-backend = ["rocksdb"]
+
 [dependencies]
 serde = { workspace = true }
 thiserror = { workspace = true }
 chainforge-error = { path = "../chainforge-error" }
 async-trait = "0.1"
 tokio = { version = "1", features = ["sync"] }
+rocksdb = { version = "0.23", optional = true }
+lru = "0.12"
 
 [dev-dependencies]
 proptest = "1.5"
