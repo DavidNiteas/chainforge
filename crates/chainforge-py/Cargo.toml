@@ -7,7 +7,7 @@ edition.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.23", features = ["extension-module"] }
+pyo3 = { version = "0.23", features = ["extension-module", "auto-initialize"] }
 chainforge-core = { path = "../chainforge-core" }
 chainforge-crypto = { path = "../chainforge-crypto" }
 chainforge-storage = { path = "../chainforge-storage" }

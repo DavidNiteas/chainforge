@@ -1,0 +1,3 @@
+[target.x86_64-pc-windows-gnu]
+linker = "E:/dev_reops/chainforge/.tools/mingw64/bin/x86_64-w64-mingw32-gcc.exe"
+ar = "E:/dev_reops/chainforge/.tools/mingw64/bin/x86_64-w64-mingw32-ar.exe"

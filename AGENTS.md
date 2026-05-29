@@ -4,7 +4,7 @@
 
 **Chainforge** 是一个计划中的高性能区块链核心库，目标是用 **Rust** 实现底层密码学、共识原语与数据结构，并通过 **PyO3** 向 Python 提供符合 Python 生态习惯的绑定层。目标用户为数据科学家、量化研究员及需要快速原型验证的区块链开发者。
 
-**当前状态：** Phase 01（最小可编译工程骨架）已完成。Rust workspace、Pixi 环境、Maturin 配置及空 crate 均已就绪，`cargo check --workspace`、`pixi run dev-build` 与 `python -c "import chainforge._internal"` 均通过。
+**当前状态：** Phase 01、Phase 1.5（工具链修复）、Phase 02（跨语言错误体系）已完成。Rust workspace 已配置完整 MinGW-w64 工具链（`.tools/mingw64/`），`cargo test --workspace`、`pixi run dev-build`、Python 异常映射测试均通过。
 
 ---
 
@@ -20,10 +20,12 @@
 | `pyproject.toml` | Python 包元数据 + maturin 配置 |
 | `design/design.md` | 747 行的总纲设计文档 |
 | `design/phases/phase-01.md` ~ `phase-11.md` | 11 份分阶段实施文档 |
-| `crates/chainforge-core/` | 空 crate：区块、交易、Merkle 树 |
+| `crates/chainforge-core/` | `ChainforgeError` 定义与 Rust 单元测试 |
 | `crates/chainforge-crypto/` | 空 crate：密码学原语 |
 | `crates/chainforge-storage/` | 空 crate：KV 存储抽象 |
-| `crates/chainforge-py/` | PyO3 绑定层（已暴露空 `_internal` 模块） |
+| `crates/chainforge-py/` | PyO3 绑定层（含错误映射与异常抛出测试函数） |
+| `.cargo/config.toml` | 指定 MinGW linker / ar 路径 |
+| `src/tests/unit/test_exceptions.py` | Python 异常映射测试 |
 | `src/chainforge/__init__.py` | Python 包入口 |
 | `src/chainforge/py.typed` | PEP 561 类型标记 |
 | `src/tests/conftest.py` | pytest 共享配置 |

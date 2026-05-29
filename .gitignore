@@ -4,6 +4,9 @@ target/
 # Pixi environment
 .pixi/
 
+# Local toolchain downloads
+.tools/
+
 # Python artifacts
 __pycache__/
 *.py[cod]
