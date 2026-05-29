@@ -1,0 +1,11 @@
+[package]
+name = "chainforge-crypto"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+proptest = "1.5"

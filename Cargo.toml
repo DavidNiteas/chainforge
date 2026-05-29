@@ -1,0 +1,19 @@
+[workspace]
+members = [
+    "crates/chainforge-core",
+    "crates/chainforge-crypto",
+    "crates/chainforge-storage",
+    "crates/chainforge-py",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/your-org/chainforge"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+anyhow = "1.0"

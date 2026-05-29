@@ -1,0 +1,25 @@
+[workspace]
+name = "chainforge"
+version = "0.1.0"
+description = "High-performance blockchain core library with Python bindings"
+authors = ["Engineering Team <team@example.com>"]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.10,<3.14"
+maturin = ">=1.7.0"
+pytest = ">=8.0"
+pytest-asyncio = ">=0.23"
+mypy = ">=1.8"
+ruff = ">=0.2"
+
+[tasks]
+install-rust = "rustup show"
+dev-build = "maturin develop --release"
+test-rust = "cargo test --workspace"
+test-py = "pytest src/tests -v --tb=short"
+test = { depends-on = ["test-rust", "test-py"] }
+typecheck = "mypy src/chainforge"
+fmt = "cargo fmt && ruff format src/"
+bench = "cargo bench --workspace"

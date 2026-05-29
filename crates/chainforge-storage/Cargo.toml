@@ -1,0 +1,12 @@
+[package]
+name = "chainforge-storage"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+chainforge-core = { path = "../chainforge-core" }
+
+[dev-dependencies]
+proptest = "1.5"
