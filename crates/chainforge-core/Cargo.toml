@@ -6,6 +6,8 @@ edition.workspace = true
 [dependencies]
 serde = { workspace = true }
 thiserror = { workspace = true }
+chainforge-error = { path = "../chainforge-error" }
+chainforge-crypto = { path = "../chainforge-crypto" }
 
 [dev-dependencies]
 proptest = "1.5"

@@ -1,4 +1,4 @@
-use chainforge_core::ChainforgeError;
+use chainforge_error::ChainforgeError;
 use pyo3::prelude::*;
 
 mod error;

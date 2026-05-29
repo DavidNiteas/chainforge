@@ -1,4 +1,4 @@
-use chainforge_core::ChainforgeError;
+use chainforge_error::ChainforgeError;
 use secp256k1::ecdsa::{RecoverableSignature, RecoveryId, Signature as SecpSignature};
 use secp256k1::{Message, PublicKey as SecpPublicKey, SecretKey as SecpSecretKey};
 
@@ -10,9 +10,12 @@ pub struct SecretKey([u8; 32]);
 #[derive(Debug, Clone, PartialEq)]
 pub struct PublicKey([u8; 33]);
 
-/// Secp256k1 ECDSA 签名（64 字节）
+/// Secp256k1 ECDSA 签名（64 字节 + recovery id）
 #[derive(Debug, Clone, PartialEq)]
-pub struct Signature([u8; 64]);
+pub struct Signature {
+    bytes: [u8; 64],
+    recovery_id: u8,
+}
 
 impl SecretKey {
     /// 生成密码学安全的随机私钥
@@ -52,10 +55,15 @@ impl SecretKey {
             .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
         let recoverable_sig =
             secp256k1::global::SECP256K1.sign_ecdsa_recoverable(&message, &secp_sk);
-        let (_recid, bytes) = recoverable_sig.serialize_compact();
-        Ok(Signature(bytes))
+        let (recid, bytes) = recoverable_sig.serialize_compact();
+        let recovery_id = match recid {
+            RecoveryId::Zero => 0,
+            RecoveryId::One => 1,
+            RecoveryId::Two => 2,
+            RecoveryId::Three => 3,
+        };
+        Ok(Signature { bytes, recovery_id })
     }
-
 }
 
 impl PublicKey {
@@ -79,7 +87,7 @@ impl PublicKey {
         let msg_hash = crate::hash::keccak256(msg);
         let message = Message::from_digest_slice(&msg_hash)
             .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
-        let secp_sig = SecpSignature::from_compact(&sig.0)
+        let secp_sig = SecpSignature::from_compact(&sig.bytes)
             .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
         match secp256k1::global::SECP256K1.verify_ecdsa(&message, &secp_sig, &secp_pk) {
             Ok(()) => Ok(true),
@@ -93,20 +101,23 @@ impl PublicKey {
         let message = Message::from_digest_slice(&msg_hash)
             .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
         // 尝试 recovery id 0..3
-        for rec_id in 0..=3u8 {
-            if let Ok(id) = RecoveryId::try_from(rec_id as i32) {
-                if let Ok(recoverable) = RecoverableSignature::from_compact(&sig.0, id) {
-                    if let Ok(recovered) =
-                        secp256k1::global::SECP256K1.recover_ecdsa(&message, &recoverable)
-                    {
-                        return Ok(PublicKey(recovered.serialize()));
-                    }
-                }
+        let recid = match sig.recovery_id {
+            0 => RecoveryId::Zero,
+            1 => RecoveryId::One,
+            2 => RecoveryId::Two,
+            3 => RecoveryId::Three,
+            _ => {
+                return Err(ChainforgeError::Crypto(
+                    "invalid recovery id".to_string(),
+                ))
             }
-        }
-        Err(ChainforgeError::Crypto(
-            "unable to recover public key from signature".to_string(),
-        ))
+        };
+        let recoverable = RecoverableSignature::from_compact(&sig.bytes, recid)
+            .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
+        let recovered = secp256k1::global::SECP256K1
+            .recover_ecdsa(&message, &recoverable)
+            .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
+        Ok(PublicKey(recovered.serialize()))
     }
 
     /// 返回压缩格式公钥字节
@@ -118,20 +129,30 @@ impl PublicKey {
 impl Signature {
     /// 返回 64 字节签名
     pub fn to_bytes(&self) -> [u8; 64] {
-        self.0
+        self.bytes
     }
 
-    /// 从 64 字节构造签名
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, ChainforgeError> {
+    /// 返回 recovery id
+    pub fn recovery_id(&self) -> u8 {
+        self.recovery_id
+    }
+
+    /// 从 64 字节 + recovery id 构造签名
+    pub fn from_bytes(bytes: &[u8], recovery_id: u8) -> Result<Self, ChainforgeError> {
         if bytes.len() != 64 {
             return Err(ChainforgeError::Crypto(format!(
                 "invalid signature length: expected 64, got {}",
                 bytes.len()
             )));
         }
+        if recovery_id > 3 {
+            return Err(ChainforgeError::Crypto(
+                "invalid recovery id: expected 0..=3".to_string(),
+            ));
+        }
         let mut arr = [0u8; 64];
         arr.copy_from_slice(bytes);
-        Ok(Signature(arr))
+        Ok(Signature { bytes: arr, recovery_id })
     }
 }
 
@@ -179,7 +200,7 @@ mod tests {
         let msg = b"serialization test";
         let sig = sk.sign(msg).unwrap();
         let bytes = sig.to_bytes();
-        let sig2 = Signature::from_bytes(&bytes).unwrap();
+        let sig2 = Signature::from_bytes(&bytes, sig.recovery_id()).unwrap();
         assert_eq!(sig, sig2);
     }
 }

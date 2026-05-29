@@ -1,4 +1,4 @@
-use chainforge_core::ChainforgeError;
+use chainforge_error::ChainforgeError;
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::PyErr;
 

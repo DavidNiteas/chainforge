@@ -8,6 +8,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.23", features = ["extension-module", "auto-initialize"] }
+chainforge-error = { path = "../chainforge-error" }
 chainforge-core = { path = "../chainforge-core" }
 chainforge-crypto = { path = "../chainforge-crypto" }
 chainforge-storage = { path = "../chainforge-storage" }
