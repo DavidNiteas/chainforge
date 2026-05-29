@@ -8,6 +8,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.23", features = ["extension-module", "auto-initialize"] }
+pyo3-async-runtimes = { version = "0.23", features = ["tokio-runtime"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
 chainforge-error = { path = "../chainforge-error" }
 chainforge-core = { path = "../chainforge-core" }
 chainforge-crypto = { path = "../chainforge-crypto" }
