@@ -50,9 +50,15 @@ def test_mempool_produce_block():
     from chainforge._internal import Mempool, Transaction
 
     pool = Mempool(capacity=100)
-    pool.insert(Transaction(nonce=0, gas_price=100, gas_limit=21000, to=b"\x01" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=50, gas_limit=21000, to=b"\x02" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=200, gas_limit=21000, to=b"\x03" * 20, value=10))
+    pool.insert(
+        Transaction(nonce=0, gas_price=100, gas_limit=21000, to=b"\x01" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=50, gas_limit=21000, to=b"\x02" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=200, gas_limit=21000, to=b"\x03" * 20, value=10)
+    )
 
     block = pool.produce_block(
         parent_hash=b"\x00" * 32,

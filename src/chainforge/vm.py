@@ -49,15 +49,21 @@ class EvmExecutor:
     def __init__(self, state: EvmState) -> None:
         self._inner = _EvmExecutor(state._raw)
 
-    def transfer(self, from_addr: bytes, to_addr: bytes, value: int) -> "ExecutionResult":
+    def transfer(
+        self, from_addr: bytes, to_addr: bytes, value: int
+    ) -> "ExecutionResult":
         raw = self._inner.transfer(from_addr, to_addr, value)
         return ExecutionResult(raw)
 
-    def deploy(self, from_addr: bytes, code: bytes, value: int = 0) -> "ExecutionResult":
+    def deploy(
+        self, from_addr: bytes, code: bytes, value: int = 0
+    ) -> "ExecutionResult":
         raw = self._inner.deploy(from_addr, code, value)
         return ExecutionResult(raw)
 
-    def call(self, from_addr: bytes, to_addr: bytes, data: bytes, value: int = 0) -> "ExecutionResult":
+    def call(
+        self, from_addr: bytes, to_addr: bytes, data: bytes, value: int = 0
+    ) -> "ExecutionResult":
         raw = self._inner.call(from_addr, to_addr, data, value)
         return ExecutionResult(raw)
 

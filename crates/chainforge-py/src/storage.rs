@@ -29,10 +29,7 @@ impl PyInMemoryStorage {
     fn get<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            let result = engine
-                .get(&key)
-                .await
-                .map_err(into_py_err)?;
+            let result = engine.get(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| match result {
                 Some(v) => Ok(PyBytes::new(py, &v)
                     .into_pyobject(py)
@@ -52,10 +49,7 @@ impl PyInMemoryStorage {
     ) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .put(&key, &value)
-                .await
-                .map_err(into_py_err)?;
+            engine.put(&key, &value).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }
@@ -63,10 +57,7 @@ impl PyInMemoryStorage {
     fn delete<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .delete(&key)
-                .await
-                .map_err(into_py_err)?;
+            engine.delete(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }
@@ -89,10 +80,7 @@ impl PyCachedStorage {
     fn get<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            let result = engine
-                .get(&key)
-                .await
-                .map_err(into_py_err)?;
+            let result = engine.get(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| match result {
                 Some(v) => Ok(PyBytes::new(py, &v)
                     .into_pyobject(py)
@@ -112,10 +100,7 @@ impl PyCachedStorage {
     ) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .put(&key, &value)
-                .await
-                .map_err(into_py_err)?;
+            engine.put(&key, &value).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }
@@ -123,10 +108,7 @@ impl PyCachedStorage {
     fn delete<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .delete(&key)
-                .await
-                .map_err(into_py_err)?;
+            engine.delete(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }
@@ -143,8 +125,7 @@ pub struct PyRocksDBEngine {
 impl PyRocksDBEngine {
     #[new]
     fn new(path: &str) -> PyResult<Self> {
-        let engine = RocksDBEngine::open(std::path::Path::new(path))
-            .map_err(into_py_err)?;
+        let engine = RocksDBEngine::open(std::path::Path::new(path)).map_err(into_py_err)?;
         Ok(PyRocksDBEngine {
             engine: Arc::new(engine),
         })
@@ -153,10 +134,7 @@ impl PyRocksDBEngine {
     fn get<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            let result = engine
-                .get(&key)
-                .await
-                .map_err(into_py_err)?;
+            let result = engine.get(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| match result {
                 Some(v) => Ok(PyBytes::new(py, &v)
                     .into_pyobject(py)
@@ -176,10 +154,7 @@ impl PyRocksDBEngine {
     ) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .put(&key, &value)
-                .await
-                .map_err(into_py_err)?;
+            engine.put(&key, &value).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }
@@ -187,10 +162,7 @@ impl PyRocksDBEngine {
     fn delete<'py>(&self, py: Python<'py>, key: Vec<u8>) -> PyResult<Bound<'py, PyAny>> {
         let engine = self.engine.clone();
         future_into_py(py, async move {
-            engine
-                .delete(&key)
-                .await
-                .map_err(into_py_err)?;
+            engine.delete(&key).await.map_err(into_py_err)?;
             Python::with_gil(|py| Ok(py.None()))
         })
     }

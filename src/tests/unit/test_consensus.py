@@ -280,13 +280,17 @@ class TestConsensusEngine:
         a = make_block(1, genesis)
         a_hash = a.header.hash()
         engine.on_prepare_qc(a, QuorumCertificate.new(a_hash, 1, Phase.Prepare))
-        engine.on_precommit_qc(a_hash, QuorumCertificate.new(a_hash, 1, Phase.PreCommit))
+        engine.on_precommit_qc(
+            a_hash, QuorumCertificate.new(a_hash, 1, Phase.PreCommit)
+        )
         engine.on_commit_qc(a_hash, QuorumCertificate.new(a_hash, 1, Phase.Commit))
 
         b = make_block(2, a_hash)
         b_hash = b.header.hash()
         engine.on_prepare_qc(b, QuorumCertificate.new(b_hash, 2, Phase.Prepare))
-        engine.on_precommit_qc(b_hash, QuorumCertificate.new(b_hash, 2, Phase.PreCommit))
+        engine.on_precommit_qc(
+            b_hash, QuorumCertificate.new(b_hash, 2, Phase.PreCommit)
+        )
         engine.on_commit_qc(b_hash, QuorumCertificate.new(b_hash, 2, Phase.Commit))
 
         tree = engine.block_tree()

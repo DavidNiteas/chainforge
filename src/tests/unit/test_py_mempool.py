@@ -34,9 +34,15 @@ def test_mempool_priority_queue():
     from chainforge._internal import Mempool, Transaction
 
     pool = Mempool()
-    pool.insert(Transaction(nonce=0, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=100, gas_limit=21000, to=b"\x02" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=50, gas_limit=21000, to=b"\x03" * 20, value=10))
+    pool.insert(
+        Transaction(nonce=0, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=100, gas_limit=21000, to=b"\x02" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=50, gas_limit=21000, to=b"\x03" * 20, value=10)
+    )
 
     selected = pool.pop_highest_priority(2)
     assert len(selected) == 2
@@ -64,12 +70,20 @@ def test_mempool_capacity_eviction():
     from chainforge._internal import Mempool, Transaction
 
     pool = Mempool(capacity=3)
-    pool.insert(Transaction(nonce=0, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=20, gas_limit=21000, to=b"\x02" * 20, value=10))
-    pool.insert(Transaction(nonce=0, gas_price=30, gas_limit=21000, to=b"\x03" * 20, value=10))
+    pool.insert(
+        Transaction(nonce=0, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=20, gas_limit=21000, to=b"\x02" * 20, value=10)
+    )
+    pool.insert(
+        Transaction(nonce=0, gas_price=30, gas_limit=21000, to=b"\x03" * 20, value=10)
+    )
     assert pool.len() == 3
 
-    pool.insert(Transaction(nonce=0, gas_price=40, gas_limit=21000, to=b"\x04" * 20, value=10))
+    pool.insert(
+        Transaction(nonce=0, gas_price=40, gas_limit=21000, to=b"\x04" * 20, value=10)
+    )
     assert pool.len() == 3
     # gas_price=10 的应被驱逐
     for h, tx in pool.txs().items():

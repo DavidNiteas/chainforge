@@ -39,9 +39,24 @@ def test_evm_deploy():
 
     # 极简 counter 合约 bytecode:
     # PUSH1 0x00 CALLDATALOAD PUSH1 0x01 ADD PUSH1 0x00 MSTORE PUSH1 0x20 PUSH1 0x00 RETURN
-    code = bytes([
-        0x60, 0x00, 0x35, 0x60, 0x01, 0x01, 0x60, 0x00, 0x52, 0x60, 0x20, 0x60, 0x00, 0xF3,
-    ])
+    code = bytes(
+        [
+            0x60,
+            0x00,
+            0x35,
+            0x60,
+            0x01,
+            0x01,
+            0x60,
+            0x00,
+            0x52,
+            0x60,
+            0x20,
+            0x60,
+            0x00,
+            0xF3,
+        ]
+    )
 
     state = EvmState()
     state.set_balance(ALICE, 10_000)

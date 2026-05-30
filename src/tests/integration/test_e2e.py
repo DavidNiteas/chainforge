@@ -27,6 +27,7 @@ def test_transaction_merkle_tree_roundtrip():
     assert len(root) == 32
 
     from chainforge._internal import keccak256
+
     proof = tree.proof(0)
     leaf_hash = keccak256(leaves[0])
     assert MerkleTree.verify(root, leaf_hash, proof)

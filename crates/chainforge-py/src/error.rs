@@ -17,9 +17,7 @@ pub fn into_py_err(err: ChainforgeError) -> PyErr {
         }
         ChainforgeError::Crypto(_) => ChainforgeCryptoError::new_err(err.to_string()),
         ChainforgeError::Storage(_) => ChainforgeStorageError::new_err(err.to_string()),
-        ChainforgeError::StateRootMismatch { .. } => {
-            ChainforgeStateError::new_err(err.to_string())
-        }
+        ChainforgeError::StateRootMismatch { .. } => ChainforgeStateError::new_err(err.to_string()),
     }
 }
 

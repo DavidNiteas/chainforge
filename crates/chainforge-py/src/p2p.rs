@@ -57,9 +57,9 @@ pub struct PyPeerInfo {
 impl PyPeerInfo {
     #[new]
     fn new(id: &Bound<'_, PyPeerId>, addr: &str) -> PyResult<Self> {
-        let addr = addr
-            .parse()
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("invalid address: {}", e)))?;
+        let addr = addr.parse().map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("invalid address: {}", e))
+        })?;
         Ok(PyPeerInfo {
             inner: PeerInfo {
                 id: id.borrow().inner,
@@ -70,9 +70,12 @@ impl PyPeerInfo {
 
     #[getter]
     fn id<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyPeerId {
-            inner: self.inner.id,
-        })
+        Py::new(
+            py,
+            PyPeerId {
+                inner: self.inner.id,
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
@@ -156,7 +159,8 @@ impl PyMessage {
     fn decode_transaction<'py>(&self, py: Python<'py>) -> PyResult<Option<PyObject>> {
         match &self.inner {
             Message::Transaction(bytes) => {
-                let tx = chainforge_core::tx::Transaction::decode_rlp(bytes).map_err(into_py_err)?;
+                let tx =
+                    chainforge_core::tx::Transaction::decode_rlp(bytes).map_err(into_py_err)?;
                 Py::new(py, PyTransaction { inner: tx })
                     .map(|p| Some(p.into_pyobject(py).unwrap().into_any().unbind()))
             }
@@ -208,9 +212,12 @@ impl PyNodeConfig {
 
     #[getter]
     fn local_id<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyPeerId {
-            inner: self.inner.local_id,
-        })
+        Py::new(
+            py,
+            PyPeerId {
+                inner: self.inner.local_id,
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 }
@@ -323,11 +330,7 @@ impl PyNode {
     }
 
     #[pyo3(signature = (limit=100))]
-    fn drain_inbox<'py>(
-        &self,
-        py: Python<'py>,
-        limit: usize,
-    ) -> PyResult<Bound<'py, PyAny>> {
+    fn drain_inbox<'py>(&self, py: Python<'py>, limit: usize) -> PyResult<Bound<'py, PyAny>> {
         let node = self.inner.clone();
         future_into_py(py, async move {
             let result = node.drain_inbox(limit).await;

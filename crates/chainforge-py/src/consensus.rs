@@ -178,9 +178,12 @@ pub struct PyBlockNode {
 impl PyBlockNode {
     #[getter]
     fn block<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyBlock {
-            inner: self.inner.block.clone(),
-        })
+        Py::new(
+            py,
+            PyBlock {
+                inner: self.inner.block.clone(),
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
@@ -240,7 +243,11 @@ impl PyBlockTree {
             .insert(block.borrow().inner.clone(), qc.borrow().inner.clone());
     }
 
-    fn add_precommit_qc(&mut self, hash: &[u8], qc: &Bound<'_, PyQuorumCertificate>) -> PyResult<()> {
+    fn add_precommit_qc(
+        &mut self,
+        hash: &[u8],
+        qc: &Bound<'_, PyQuorumCertificate>,
+    ) -> PyResult<()> {
         let h = parse_hash(hash)?;
         self.inner.add_precommit_qc(&h, qc.borrow().inner.clone());
         Ok(())
@@ -432,9 +439,12 @@ impl PyPacemaker {
     }
 
     fn leader_rotator<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyLeaderRotator {
-            inner: self.inner.leader_rotator.clone(),
-        })
+        Py::new(
+            py,
+            PyLeaderRotator {
+                inner: self.inner.leader_rotator.clone(),
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 }
@@ -473,11 +483,10 @@ impl PyConsensusEngine {
         let hash = parse_hash(parent_hash)?;
         let rust_txs: Vec<chainforge_core::tx::Transaction> =
             txs.iter().map(|t| t.borrow(py).inner.clone()).collect();
-        let block = self
-            .inner
-            .propose_block(hash, number, rust_txs, high_qc.borrow().inner.clone());
-        Py::new(py, PyBlock { inner: block })
-            .map(|p| p.into_pyobject(py).unwrap().into_any())
+        let block =
+            self.inner
+                .propose_block(hash, number, rust_txs, high_qc.borrow().inner.clone());
+        Py::new(py, PyBlock { inner: block }).map(|p| p.into_pyobject(py).unwrap().into_any())
     }
 
     fn vote_prepare(
@@ -496,9 +505,8 @@ impl PyConsensusEngine {
         phase: PyPhase,
         quorum: usize,
     ) -> Option<PyQuorumCertificate> {
-        let rust_votes: Vec<Vote> = Python::with_gil(|py| {
-            votes.iter().map(|v| v.borrow(py).inner.clone()).collect()
-        });
+        let rust_votes: Vec<Vote> =
+            Python::with_gil(|py| votes.iter().map(|v| v.borrow(py).inner.clone()).collect());
         self.inner
             .form_qc(rust_votes, phase.into(), quorum)
             .map(|qc| PyQuorumCertificate { inner: qc })
@@ -515,19 +523,13 @@ impl PyConsensusEngine {
         qc: &Bound<'_, PyQuorumCertificate>,
     ) -> PyResult<()> {
         let h = parse_hash(hash)?;
-        self.inner
-            .on_precommit_qc(&h, qc.borrow().inner.clone());
+        self.inner.on_precommit_qc(&h, qc.borrow().inner.clone());
         Ok(())
     }
 
-    fn on_commit_qc(
-        &mut self,
-        hash: &[u8],
-        qc: &Bound<'_, PyQuorumCertificate>,
-    ) -> PyResult<()> {
+    fn on_commit_qc(&mut self, hash: &[u8], qc: &Bound<'_, PyQuorumCertificate>) -> PyResult<()> {
         let h = parse_hash(hash)?;
-        self.inner
-            .on_commit_qc(&h, qc.borrow().inner.clone());
+        self.inner.on_commit_qc(&h, qc.borrow().inner.clone());
         Ok(())
     }
 
@@ -536,23 +538,32 @@ impl PyConsensusEngine {
     }
 
     fn block_tree<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyBlockTree {
-            inner: self.inner.block_tree.clone(),
-        })
+        Py::new(
+            py,
+            PyBlockTree {
+                inner: self.inner.block_tree.clone(),
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
     fn safety<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PySafetyRules {
-            inner: self.inner.safety.clone(),
-        })
+        Py::new(
+            py,
+            PySafetyRules {
+                inner: self.inner.safety.clone(),
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
     fn pacemaker<'py>(&self, py: Python<'py>) -> PyResult<PyObject> {
-        Py::new(py, PyPacemaker {
-            inner: self.inner.pacemaker.clone(),
-        })
+        Py::new(
+            py,
+            PyPacemaker {
+                inner: self.inner.pacemaker.clone(),
+            },
+        )
         .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 }

@@ -5,6 +5,7 @@ import pytest
 
 def test_merkle_tree_root_returns_bytes():
     from chainforge._internal import MerkleTree
+
     leaves = [b"a", b"b", b"c"]
     tree = MerkleTree(leaves)
     root = tree.root()
