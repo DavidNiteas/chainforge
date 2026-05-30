@@ -1,8 +1,8 @@
 # Chainforge
 
-[![Rust Tests](https://img.shields.io/badge/Rust%20Tests-101%20passing-success)](./docs/README.en.md)
-[![Python Tests](https://img.shields.io/badge/Python%20Tests-31%20passing-success)](./docs/README.en.md)
-[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](./LICENSE)
+[![Rust Tests](https://img.shields.io/badge/Rust%20Tests-102%20passing-success)](./docs/README.en.md)
+[![Python Tests](https://img.shields.io/badge/Python%20Tests-97%20passing-success)](./docs/README.en.md)
+[![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue)](./LICENSE-MIT)
 
 High-performance blockchain core library with Python bindings.
 
@@ -53,11 +53,18 @@ See the [User Guide](./docs/README.en.md) for detailed installation instructions
 ## Test Status
 
 ```
-cargo test --workspace   # 101 Rust tests passing
-pixi run test-py         # 31 Python tests passing
+cargo test --workspace   # 102 Rust tests passing
+pixi run test-py         # 97 Python tests passing
 pixi run typecheck       # mypy zero errors
 ```
 
 ## License
 
-MIT OR Apache-2.0
+Chainforge is dual-licensed under either:
+
+- **[MIT License](./LICENSE-MIT)** — short and permissive
+- **[Apache License, Version 2.0](./LICENSE-APACHE)** — includes explicit patent grant
+
+at your option. This dual-licensing approach is the de facto standard in the Rust ecosystem (used by Rust itself, PyO3, Tokio, and Serde) and maximizes compatibility with downstream projects.
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in Chainforge by you, as defined in the Apache-2.0 license, shall be dual-licensed as above, without any additional terms or conditions.

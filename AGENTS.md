@@ -107,7 +107,7 @@ chainforge/
   - `rlp` —— RlpEncoder / RlpDecoder
   - `light_client` —— LightClient（区块头同步验证、交易包含验证）
   - `mpt` —— MPT（Merkle Patricia Trie）证明验证
-- **测试：** 31 个
+- **测试：** 32 个
 - **基准：** `merkle_bench`
 
 ### 4. chainforge-storage

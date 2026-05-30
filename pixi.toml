@@ -2,7 +2,7 @@
 name = "chainforge"
 version = "0.1.0"
 description = "High-performance blockchain core library with Python bindings"
-authors = ["Engineering Team <team@example.com>"]
+authors = ["David Niteas <david.ql.d@foxmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
