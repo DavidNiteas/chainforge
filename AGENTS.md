@@ -38,7 +38,7 @@ chainforge/
 │   ├── chainforge-crypto/     # 密码学原语：SHA-256、Keccak-256、RIPEMD-160、secp256k1 ECDSA
 │   ├── chainforge-core/       # 核心结构：Transaction、BlockHeader、Block、MerkleTree、RLP 编解码、LightClient、MPT
 │   ├── chainforge-storage/    # 存储抽象 Trait + InMemoryStorage + CachedStorage（LRU）+ RocksDBEngine（可选 feature）
-│   ├── chainforge-py/         # PyO3 绑定层：暴露 Transaction/BlockHeader/Block/MerkleTree/SecretKey/PublicKey/InMemoryStorage/CachedStorage/RocksDBEngine/Mempool/BlockBuilder/EvmState/EvmExecutor/LightClient/MptProof/ConsensusEngine/Vote/QC/Phase/SafetyRules/Pacemaker/LeaderRotator/BlockTree/Node/NodeConfig/Message/PeerId/PeerInfo/RoutingTable
+│   ├── chainforge-py/         # PyO3 绑定层：暴露 Transaction/BlockHeader/Block/MerkleTree/SecretKey/PublicKey/InMemoryStorage/CachedStorage/RocksDBEngine/Mempool/BlockBuilder/EvmState/EvmExecutor/LightClient/MptProof/ConsensusEngine/Vote/QC/Phase/SafetyRules/Pacemaker/LeaderRotator/BlockTree/Node/NodeConfig/Message/PeerId/PeerInfo/RoutingTable + 哈希函数 + 异常类型
 │   ├── chainforge-p2p/        # P2P 网络层：Noise 握手、Message 编解码、Kademlia 路由表、Gossip 广播、Sync 同步、Node 集成
 │   ├── chainforge-mempool/    # 交易内存池：CRUD、优先级队列、nonce 验证、容量限制与驱逐
 │   ├── chainforge-block-producer/  # 区块生产者：BlockBuilder、从 mempool 取交易构建区块
