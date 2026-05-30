@@ -26,7 +26,7 @@ jobs:
         run: cargo test --workspace --all-features
 
       - name: Build benches
-        run: cargo bench --workspace -- --no-run
+        run: cargo bench --workspace --no-run
 
   python-checks:
     runs-on: ${{ matrix.os }}
@@ -34,14 +34,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
-      - uses: prefix-dev/setup-pixi@v0.8.0
+      - uses: prefix-dev/setup-pixi@v0.9.6
         with:
-          pixi-version: v0.25.0
+          pixi-version: v0.41.0
           cache: true
+          cache-write: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
 
       - name: Build
         run: pixi run dev-build
@@ -64,7 +64,6 @@ jobs:
 
       - uses: PyO3/maturin-action@v1
         with:
-          target: ${{ matrix.target }}
           args: --release --out dist
           sccache: "true"
 
