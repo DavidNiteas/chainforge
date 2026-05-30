@@ -110,7 +110,7 @@ mod tests {
     use std::path::PathBuf;
 
     fn temp_db() -> (RocksDBEngine, PathBuf) {
-        let dir = std::env::temp_dir().join(format!("chainforge_test_{}", std::process::id()));
+        let dir = tempfile::tempdir().unwrap().into_path();
         let engine = RocksDBEngine::open(&dir).unwrap();
         (engine, dir)
     }
