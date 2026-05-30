@@ -1,5 +1,6 @@
 //! P2P 节点主结构，整合所有子系统。
 
+use std::collections::VecDeque;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -33,12 +34,14 @@ impl NodeConfig {
 }
 
 /// P2P 节点。
+#[derive(Clone)]
 pub struct Node {
     pub config: NodeConfig,
     pub routing_table: Arc<RwLock<RoutingTable>>,
     pub gossip: Arc<RwLock<Gossip>>,
     pub sync: Arc<RwLock<SyncManager>>,
     pub mempool: Arc<RwLock<Mempool>>,
+    inbox: Arc<RwLock<VecDeque<Message>>>,
 }
 
 impl Node {
@@ -51,8 +54,28 @@ impl Node {
             ))),
             sync: Arc::new(RwLock::new(SyncManager::new())),
             mempool: Arc::new(RwLock::new(Mempool::new())),
+            inbox: Arc::new(RwLock::new(VecDeque::new())),
             config,
         }
+    }
+
+    /// 将消息推入收件箱（供 Python 侧拉取）。
+    pub async fn push_inbox(&self, msg: Message) {
+        let mut inbox = self.inbox.write().await;
+        inbox.push_back(msg);
+    }
+
+    /// 批量拉取收件箱中的消息。
+    pub async fn drain_inbox(&self, limit: usize) -> Vec<Message> {
+        let mut inbox = self.inbox.write().await;
+        let mut result = Vec::with_capacity(limit.min(inbox.len()));
+        while result.len() < limit {
+            match inbox.pop_front() {
+                Some(msg) => result.push(msg),
+                None => break,
+            }
+        }
+        result
     }
 
     /// 处理收到的消息，返回需要转发的消息列表。
@@ -82,6 +105,11 @@ impl Node {
                         mempool.insert(tx);
                     }
                 }
+                // 推入收件箱供 Python 侧拉取
+                {
+                    let mut inbox = self.inbox.write().await;
+                    inbox.push_back(msg.clone());
+                }
             }
             Message::Block(_) => {
                 let msg_id = Gossip::message_id(msg);
@@ -91,6 +119,11 @@ impl Node {
                         gossip.mark_seen(msg_id);
                         to_forward.push(msg.clone());
                     }
+                }
+                // 推入收件箱供 Python 侧拉取
+                {
+                    let mut inbox = self.inbox.write().await;
+                    inbox.push_back(msg.clone());
                 }
             }
             Message::BlockRequest { from, to } => {

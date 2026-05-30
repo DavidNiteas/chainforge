@@ -774,12 +774,18 @@ dependencies = [
 name = "chainforge-py"
 version = "0.1.0"
 dependencies = [
+ "chainforge-block-producer",
+ "chainforge-consensus",
  "chainforge-core",
  "chainforge-crypto",
  "chainforge-error",
+ "chainforge-evm",
+ "chainforge-mempool",
+ "chainforge-p2p",
  "chainforge-storage",
  "pyo3",
  "pyo3-async-runtimes",
+ "revm",
  "tokio",
 ]
 

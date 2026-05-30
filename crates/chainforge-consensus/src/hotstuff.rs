@@ -53,11 +53,7 @@ impl ConsensusEngine {
     }
 
     /// 副本：对 Prepare 阶段投票。
-    pub fn vote_prepare(
-        &mut self,
-        block: &Block,
-        high_qc: &QuorumCertificate,
-    ) -> Option<Vote> {
+    pub fn vote_prepare(&mut self, block: &Block, high_qc: &QuorumCertificate) -> Option<Vote> {
         if !self.safety.can_vote_prepare(block, high_qc) {
             return None;
         }
@@ -71,7 +67,12 @@ impl ConsensusEngine {
     }
 
     /// 收集投票形成 QC。
-    pub fn form_qc(&self, votes: Vec<Vote>, phase: Phase, quorum: usize) -> Option<QuorumCertificate> {
+    pub fn form_qc(
+        &self,
+        votes: Vec<Vote>,
+        phase: Phase,
+        quorum: usize,
+    ) -> Option<QuorumCertificate> {
         if votes.len() < quorum {
             return None;
         }
@@ -172,7 +173,9 @@ mod tests {
             make_vote(hash, 1, Phase::PreCommit),
             make_vote(hash, 1, Phase::PreCommit),
         ];
-        let precommit_qc = engine.form_qc(precommit_votes, Phase::PreCommit, 3).unwrap();
+        let precommit_qc = engine
+            .form_qc(precommit_votes, Phase::PreCommit, 3)
+            .unwrap();
         engine.on_precommit_qc(&hash, precommit_qc);
 
         // Commit 阶段

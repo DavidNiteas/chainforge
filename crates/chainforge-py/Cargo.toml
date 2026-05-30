@@ -14,3 +14,13 @@ chainforge-error = { path = "../chainforge-error" }
 chainforge-core = { path = "../chainforge-core" }
 chainforge-crypto = { path = "../chainforge-crypto" }
 chainforge-storage = { path = "../chainforge-storage" }
+chainforge-mempool = { path = "../chainforge-mempool" }
+chainforge-block-producer = { path = "../chainforge-block-producer" }
+chainforge-evm = { path = "../chainforge-evm" }
+chainforge-consensus = { path = "../chainforge-consensus" }
+chainforge-p2p = { path = "../chainforge-p2p" }
+revm = { version = "14", default-features = false }
+
+[features]
+default = []
+rocksdb-backend = ["chainforge-storage/rocksdb-backend"]

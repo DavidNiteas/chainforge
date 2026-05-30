@@ -71,7 +71,11 @@ impl Mempool {
     pub fn is_nonce_valid(&self, tx: &Transaction) -> bool {
         let sender = Self::extract_sender(tx);
         let expected = self.next_nonce(&sender);
-        tx.nonce == expected || self.account_nonces.get(&sender).is_some_and(|m| m.contains_key(&tx.nonce))
+        tx.nonce == expected
+            || self
+                .account_nonces
+                .get(&sender)
+                .is_some_and(|m| m.contains_key(&tx.nonce))
     }
 
     /// 淘汰 gas_price 最低的一笔交易。

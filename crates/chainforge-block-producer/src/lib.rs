@@ -4,6 +4,7 @@ use chainforge_core::block::{Block, BlockHeader};
 use chainforge_core::tx::Transaction;
 
 /// 区块构建器。
+#[derive(Clone)]
 pub struct BlockBuilder {
     parent_hash: [u8; 32],
     number: u64,

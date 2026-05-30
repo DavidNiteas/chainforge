@@ -65,12 +65,18 @@ impl InMemoryEvmState {
 
     /// 查询账户余额。
     pub fn balance(&self, address: Address) -> U256 {
-        self.accounts.get(&address).map(|info| info.balance).unwrap_or_default()
+        self.accounts
+            .get(&address)
+            .map(|info| info.balance)
+            .unwrap_or_default()
     }
 
     /// 查询账户 nonce。
     pub fn nonce(&self, address: Address) -> u64 {
-        self.accounts.get(&address).map(|info| info.nonce).unwrap_or_default()
+        self.accounts
+            .get(&address)
+            .map(|info| info.nonce)
+            .unwrap_or_default()
     }
 
     /// 查询合约字节码。
@@ -95,7 +101,11 @@ impl Database for InMemoryEvmState {
     }
 
     fn storage(&mut self, address: Address, index: U256) -> Result<U256, Self::Error> {
-        Ok(self.storage.get(&(address, index)).copied().unwrap_or_default())
+        Ok(self
+            .storage
+            .get(&(address, index))
+            .copied()
+            .unwrap_or_default())
     }
 
     fn block_hash(&mut self, number: u64) -> Result<B256, Self::Error> {
@@ -138,7 +148,11 @@ impl DatabaseRef for InMemoryEvmState {
     }
 
     fn storage_ref(&self, address: Address, index: U256) -> Result<U256, Self::Error> {
-        Ok(self.storage.get(&(address, index)).copied().unwrap_or_default())
+        Ok(self
+            .storage
+            .get(&(address, index))
+            .copied()
+            .unwrap_or_default())
     }
 
     fn block_hash_ref(&self, number: u64) -> Result<B256, Self::Error> {

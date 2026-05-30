@@ -5,6 +5,7 @@ use chainforge_core::block::Block;
 use crate::vote::{Phase, QuorumCertificate};
 
 /// 安全规则：防止双投和无效分支。
+#[derive(Clone)]
 pub struct SafetyRules {
     /// 当前 locked 的 view（来自 Prepare-QC）。
     pub locked_view: u64,

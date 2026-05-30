@@ -129,9 +129,7 @@ pub fn verify_proof(
         match node {
             MptNode::Null => return Ok(None),
             MptNode::Leaf(path, value) => {
-                if path_idx + path.len() == nibbles.len()
-                    && nibbles[path_idx..] == path[..]
-                {
+                if path_idx + path.len() == nibbles.len() && nibbles[path_idx..] == path[..] {
                     return Ok(Some(value));
                 } else {
                     return Ok(None);

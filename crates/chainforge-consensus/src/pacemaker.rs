@@ -1,6 +1,7 @@
 //! Pacemaker：视图超时与领导者轮换。
 
 /// 领导者选择器。
+#[derive(Clone)]
 pub struct LeaderRotator {
     pub node_count: usize,
 }
@@ -17,6 +18,7 @@ impl LeaderRotator {
 }
 
 /// Pacemaker 状态。
+#[derive(Clone)]
 pub struct Pacemaker {
     pub current_view: u64,
     pub node_id: usize,

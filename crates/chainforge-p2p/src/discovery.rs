@@ -27,6 +27,7 @@ pub fn distance_bucket_index(dist: &[u8; 32]) -> usize {
 }
 
 /// K-bucket：存储最多 K 个 peers，按最近访问时间排序。
+#[derive(Clone)]
 pub struct KBucket {
     peers: VecDeque<PeerInfo>,
 }
@@ -74,6 +75,7 @@ impl KBucket {
 }
 
 /// Kademlia 路由表：256 个 K-bucket。
+#[derive(Clone)]
 pub struct RoutingTable {
     local_id: PeerId,
     buckets: Vec<KBucket>,

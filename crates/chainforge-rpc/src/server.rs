@@ -164,12 +164,15 @@ async fn handle_get_block_by_number(
     let key = format!("block:number:{}", number_str);
     match state.storage.get(key.as_bytes()).await {
         Ok(Some(data)) => match chainforge_core::block::Block::decode_rlp(&data) {
-            Ok(block) => RpcResponse::success(id, json!({
-                "number": u64_to_hex(block.header.number),
-                "hash": format!("0x{}", hex::encode(block.header.hash())),
-                "parentHash": format!("0x{}", hex::encode(block.header.parent_hash)),
-                "timestamp": u64_to_hex(block.header.timestamp),
-            })),
+            Ok(block) => RpcResponse::success(
+                id,
+                json!({
+                    "number": u64_to_hex(block.header.number),
+                    "hash": format!("0x{}", hex::encode(block.header.hash())),
+                    "parentHash": format!("0x{}", hex::encode(block.header.parent_hash)),
+                    "timestamp": u64_to_hex(block.header.timestamp),
+                }),
+            ),
             Err(_) => RpcResponse::success(id, serde_json::Value::Null),
         },
         _ => RpcResponse::success(id, serde_json::Value::Null),
@@ -188,12 +191,15 @@ async fn handle_get_block_by_hash(
     let key = format!("block:hash:{}", hash_hex);
     match state.storage.get(key.as_bytes()).await {
         Ok(Some(data)) => match chainforge_core::block::Block::decode_rlp(&data) {
-            Ok(block) => RpcResponse::success(id, json!({
-                "number": u64_to_hex(block.header.number),
-                "hash": format!("0x{}", hex::encode(block.header.hash())),
-                "parentHash": format!("0x{}", hex::encode(block.header.parent_hash)),
-                "timestamp": u64_to_hex(block.header.timestamp),
-            })),
+            Ok(block) => RpcResponse::success(
+                id,
+                json!({
+                    "number": u64_to_hex(block.header.number),
+                    "hash": format!("0x{}", hex::encode(block.header.hash())),
+                    "parentHash": format!("0x{}", hex::encode(block.header.parent_hash)),
+                    "timestamp": u64_to_hex(block.header.timestamp),
+                }),
+            ),
             Err(_) => RpcResponse::success(id, serde_json::Value::Null),
         },
         _ => RpcResponse::success(id, serde_json::Value::Null),
@@ -285,7 +291,9 @@ mod tests {
             .method("POST")
             .uri("/")
             .header("content-type", "application/json")
-            .body(Body::from(r#"{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}"#))
+            .body(Body::from(
+                r#"{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}"#,
+            ))
             .unwrap();
 
         let response = app.oneshot(req).await.unwrap();
@@ -331,7 +339,9 @@ mod tests {
             .method("POST")
             .uri("/")
             .header("content-type", "application/json")
-            .body(Body::from(r#"{"jsonrpc":"2.0","method":"eth_unknown","params":[],"id":1}"#))
+            .body(Body::from(
+                r#"{"jsonrpc":"2.0","method":"eth_unknown","params":[],"id":1}"#,
+            ))
             .unwrap();
 
         let response = app.oneshot(req).await.unwrap();

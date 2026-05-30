@@ -45,7 +45,7 @@ impl SyncManager {
     }
 
     /// 接收到新区块广播时的处理逻辑。
-    /// 
+    ///
     /// 返回 `Some((from, to))` 表示需要请求缺失的区块范围。
     pub fn on_new_block(&mut self, block: &Block) -> Option<(u64, u64)> {
         let block_num = block.header.number;
@@ -105,7 +105,10 @@ impl SyncManager {
 
     /// 检查是否已经在请求指定范围。
     fn is_already_requesting(&self, from: u64, to: u64) -> bool {
-        self.state.pending_requests.iter().any(|(f, t)| *f == from && *t == to)
+        self.state
+            .pending_requests
+            .iter()
+            .any(|(f, t)| *f == from && *t == to)
     }
 
     /// 获取待处理的交易（供上层批量处理）。

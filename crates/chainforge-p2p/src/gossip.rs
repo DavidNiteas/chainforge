@@ -67,7 +67,11 @@ impl Gossip {
             })
             .collect();
         indexed.sort_by_key(|(h, _)| *h);
-        indexed.into_iter().take(self.fanout).map(|(_, p)| p).collect()
+        indexed
+            .into_iter()
+            .take(self.fanout)
+            .map(|(_, p)| p)
+            .collect()
     }
 }
 

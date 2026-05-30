@@ -4,6 +4,16 @@ use pyo3::types::PyBytes;
 
 use crate::error::into_py_err;
 
+#[pyfunction]
+pub fn sha256(data: &[u8]) -> [u8; 32] {
+    chainforge_crypto::sha256(data)
+}
+
+#[pyfunction]
+pub fn ripemd160(data: &[u8]) -> [u8; 20] {
+    chainforge_crypto::ripemd160(data)
+}
+
 #[pyclass(name = "SecretKey")]
 pub struct PySecretKey {
     inner: SecretKey,

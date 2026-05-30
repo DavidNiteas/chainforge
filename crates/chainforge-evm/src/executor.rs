@@ -7,6 +7,7 @@ use revm::{DatabaseCommit, DatabaseRef, Evm};
 use crate::state::InMemoryEvmState;
 
 /// EVM 交易执行器。
+#[derive(Clone)]
 pub struct EvmExecutor<DB> {
     db: DB,
 }
@@ -89,9 +90,9 @@ impl EvmExecutor<InMemoryEvmState> {
             })
             .build();
 
-        let result = evm.transact().map_err(|e| {
-            ChainforgeError::InvalidParameter(format!("EVM call failed: {:?}", e))
-        })?;
+        let result = evm
+            .transact()
+            .map_err(|e| ChainforgeError::InvalidParameter(format!("EVM call failed: {:?}", e)))?;
 
         evm.context.evm.db.commit(result.state.clone());
 
@@ -155,8 +156,7 @@ mod tests {
         // 极简 counter 合约 bytecode:
         // PUSH1 0x00 CALLDATALOAD PUSH1 0x01 ADD PUSH1 0x00 MSTORE PUSH1 0x20 PUSH1 0x00 RETURN
         let code = vec![
-            0x60, 0x00, 0x35, 0x60, 0x01, 0x01, 0x60, 0x00, 0x52, 0x60, 0x20, 0x60, 0x00,
-            0xF3,
+            0x60, 0x00, 0x35, 0x60, 0x01, 0x01, 0x60, 0x00, 0x52, 0x60, 0x20, 0x60, 0x00, 0xF3,
         ];
 
         let mut db = InMemoryEvmState::new();

@@ -17,6 +17,7 @@ pub struct BlockNode {
 }
 
 /// 区块树。
+#[derive(Clone)]
 pub struct BlockTree {
     nodes: HashMap<[u8; 32], BlockNode>,
     /// 已提交的区块哈希列表。

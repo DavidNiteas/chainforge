@@ -20,6 +20,10 @@ impl RlpEncoder {
         self.buf
     }
 
+    pub fn extend_raw(&mut self, bytes: &[u8]) {
+        self.buf.extend_from_slice(bytes);
+    }
+
     pub fn encode_bytes(&mut self, bytes: &[u8]) {
         if bytes.len() == 1 && bytes[0] < 0x80 {
             self.buf.push(bytes[0]);
@@ -179,6 +183,38 @@ impl<'a> RlpDecoder<'a> {
             arr[16 - bytes.len()..].copy_from_slice(bytes);
             Ok(u128::from_be_bytes(arr))
         }
+    }
+
+    pub fn decode_raw_item(&mut self) -> Result<Vec<u8>, ChainforgeError> {
+        let start = self.pos;
+        let prefix = self.read_byte()?;
+        let item_len = if prefix < 0x80 {
+            1
+        } else if prefix <= 0xb7 {
+            let len = (prefix - 0x80) as usize;
+            self.ensure(len)?;
+            1 + len
+        } else if prefix <= 0xbf {
+            let len_len = (prefix - 0xb7) as usize;
+            self.ensure(len_len)?;
+            let len = decode_length(&self.data[self.pos..self.pos + len_len]);
+            self.pos += len_len;
+            self.ensure(len)?;
+            1 + len_len + len
+        } else if prefix <= 0xf7 {
+            let len = (prefix - 0xc0) as usize;
+            self.ensure(len)?;
+            1 + len
+        } else {
+            let len_len = (prefix - 0xf7) as usize;
+            self.ensure(len_len)?;
+            let len = decode_length(&self.data[self.pos..self.pos + len_len]);
+            self.pos += len_len;
+            self.ensure(len)?;
+            1 + len_len + len
+        };
+        self.pos = start + item_len;
+        Ok(self.data[start..start + item_len].to_vec())
     }
 
     fn read_byte(&mut self) -> Result<u8, ChainforgeError> {

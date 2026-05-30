@@ -102,15 +102,15 @@ impl Block {
         use crate::rlp::RlpEncoder;
         let mut enc = RlpEncoder::new();
         enc.encode_list(|e| {
-            e.encode_bytes(&self.header.encode_rlp());
+            e.extend_raw(&self.header.encode_rlp());
             e.encode_list(|e2| {
                 for tx in &self.transactions {
-                    e2.encode_bytes(&tx.encode_rlp());
+                    e2.extend_raw(&tx.encode_rlp());
                 }
             });
             e.encode_list(|e2| {
                 for uncle in &self.uncle_headers {
-                    e2.encode_bytes(&uncle.encode_rlp());
+                    e2.extend_raw(&uncle.encode_rlp());
                 }
             });
         });
@@ -121,7 +121,7 @@ impl Block {
     pub fn decode_rlp(data: &[u8]) -> Result<Self, ChainforgeError> {
         use crate::rlp::RlpDecoder;
         let mut dec = RlpDecoder::new(data);
-        let items: Vec<Vec<u8>> = dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        let items: Vec<Vec<u8>> = dec.decode_list(|d| d.decode_raw_item())?;
         if items.len() != 3 {
             return Err(ChainforgeError::Serialization(format!(
                 "expected 3 RLP items for Block, got {}",
@@ -131,14 +131,14 @@ impl Block {
         let header = BlockHeader::decode_rlp(&items[0])?;
 
         let mut tx_dec = RlpDecoder::new(&items[1]);
-        let tx_bytes: Vec<Vec<u8>> = tx_dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        let tx_bytes: Vec<Vec<u8>> = tx_dec.decode_list(|d| d.decode_raw_item())?;
         let transactions: Vec<Transaction> = tx_bytes
             .iter()
             .map(|b| Transaction::decode_rlp(b))
             .collect::<Result<Vec<_>, _>>()?;
 
         let mut uncle_dec = RlpDecoder::new(&items[2]);
-        let uncle_bytes: Vec<Vec<u8>> = uncle_dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        let uncle_bytes: Vec<Vec<u8>> = uncle_dec.decode_list(|d| d.decode_raw_item())?;
         let uncle_headers: Vec<BlockHeader> = uncle_bytes
             .iter()
             .map(|b| BlockHeader::decode_rlp(b))
@@ -188,6 +188,41 @@ mod tests {
         let encoded = header.encode_rlp();
         let result = BlockHeader::decode_rlp(&encoded);
         assert!(matches!(result, Err(ChainforgeError::InvalidParameter(_))));
+    }
+
+    #[test]
+    fn test_block_rlp_roundtrip() {
+        let tx1 = Transaction {
+            nonce: 0,
+            gas_price: 1,
+            gas_limit: 21000,
+            to: Some([0xabu8; 20]),
+            value: 100,
+            data: vec![],
+            v: 27,
+            r: [0u8; 32],
+            s: [0u8; 32],
+        };
+        let block = Block {
+            header: BlockHeader {
+                parent_hash: [0u8; 32],
+                number: 1,
+                timestamp: 0,
+                difficulty: 0,
+                nonce: 0,
+                extra_data: vec![],
+                state_root: [0u8; 32],
+                txs_root: [0u8; 32],
+            },
+            transactions: vec![tx1.clone()],
+            uncle_headers: vec![],
+        };
+        let encoded = block.encode_rlp();
+        eprintln!("encoded len: {}", encoded.len());
+        eprintln!("encoded: {:02x?}", encoded);
+        let decoded = Block::decode_rlp(&encoded).unwrap();
+        assert_eq!(block.header, decoded.header);
+        assert_eq!(block.transactions.len(), decoded.transactions.len());
     }
 
     #[test]

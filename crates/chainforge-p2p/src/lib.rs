@@ -8,7 +8,7 @@ pub mod peer;
 pub mod sync;
 pub mod transport;
 
-pub use discovery::{KBucket, RoutingTable, xor_distance};
+pub use discovery::{xor_distance, KBucket, RoutingTable};
 pub use message::Message;
 pub use peer::{PeerId, PeerInfo};
 pub use transport::{NoiseStream, NoiseTransport};

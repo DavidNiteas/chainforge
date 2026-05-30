@@ -11,6 +11,15 @@ pub struct CachedStorage<E: StorageEngine> {
     cache: Arc<RwLock<LruCache<Vec<u8>, Vec<u8>>>>,
 }
 
+impl<E: StorageEngine + Clone> Clone for CachedStorage<E> {
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+            cache: self.cache.clone(),
+        }
+    }
+}
+
 impl<E: StorageEngine> CachedStorage<E> {
     pub fn new(inner: E, capacity: usize) -> Self {
         let capacity = NonZeroUsize::new(capacity).unwrap_or_else(|| NonZeroUsize::new(1).unwrap());
