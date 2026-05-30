@@ -67,6 +67,7 @@ jobs:
 
       - uses: PyO3/maturin-action@v1
         with:
+          python-version: '3.13'
           args: --release --out dist
           sccache: "true"
 
