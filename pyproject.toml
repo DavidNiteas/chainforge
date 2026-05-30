@@ -26,6 +26,7 @@ classifiers = [
 manifest-path = "crates/chainforge-py/Cargo.toml"
 module-name = "chainforge._internal"
 python-source = "src"
+features = ["extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = ["src/tests"]
