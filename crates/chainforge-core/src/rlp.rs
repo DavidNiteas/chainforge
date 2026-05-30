@@ -5,6 +5,12 @@ pub struct RlpEncoder {
     buf: Vec<u8>,
 }
 
+impl Default for RlpEncoder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RlpEncoder {
     pub fn new() -> Self {
         RlpEncoder { buf: Vec::new() }

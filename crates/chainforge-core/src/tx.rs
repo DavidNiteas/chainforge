@@ -51,14 +51,18 @@ impl Transaction {
         }
 
         fn bytes_to_u64(bytes: &[u8]) -> u64 {
-            if bytes.is_empty() { 0 } else {
+            if bytes.is_empty() {
+                0
+            } else {
                 let mut arr = [0u8; 8];
                 arr[8 - bytes.len()..].copy_from_slice(bytes);
                 u64::from_be_bytes(arr)
             }
         }
         fn bytes_to_u128(bytes: &[u8]) -> u128 {
-            if bytes.is_empty() { 0 } else {
+            if bytes.is_empty() {
+                0
+            } else {
                 let mut arr = [0u8; 16];
                 arr[16 - bytes.len()..].copy_from_slice(bytes);
                 u128::from_be_bytes(arr)
@@ -150,7 +154,9 @@ impl Transaction {
     /// 使用私钥对交易进行签名
     pub fn sign(&mut self, sk: &SecretKey) -> Result<(), ChainforgeError> {
         let hash = self.unsigned_hash();
-        let sig = sk.sign(&hash).map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
+        let sig = sk
+            .sign(&hash)
+            .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
         let sig_bytes = sig.to_bytes();
         self.r.copy_from_slice(&sig_bytes[..32]);
         self.s.copy_from_slice(&sig_bytes[32..]);

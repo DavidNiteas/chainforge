@@ -5,6 +5,12 @@ members = [
     "crates/chainforge-crypto",
     "crates/chainforge-storage",
     "crates/chainforge-py",
+    "crates/chainforge-p2p",
+    "crates/chainforge-mempool",
+    "crates/chainforge-block-producer",
+    "crates/chainforge-consensus",
+    "crates/chainforge-evm",
+    "crates/chainforge-rpc",
 ]
 resolver = "2"
 

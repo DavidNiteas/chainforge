@@ -21,7 +21,8 @@ impl PySecretKey {
     #[staticmethod]
     fn from_bytes(py: Python, bytes: &[u8]) -> PyResult<PyObject> {
         let sk = SecretKey::from_bytes(bytes).map_err(into_py_err)?;
-        Py::new(py, PySecretKey { inner: sk }).map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
+        Py::new(py, PySecretKey { inner: sk })
+            .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
     fn public_key<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyBytes>> {
@@ -53,7 +54,8 @@ impl PyPublicKey {
     #[staticmethod]
     fn from_bytes(py: Python, bytes: &[u8]) -> PyResult<PyObject> {
         let pk = PublicKey::from_bytes(bytes).map_err(into_py_err)?;
-        Py::new(py, PyPublicKey { inner: pk }).map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
+        Py::new(py, PyPublicKey { inner: pk })
+            .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
     fn verify(&self, py: Python, msg: &[u8], sig_bytes: &[u8]) -> PyResult<bool> {

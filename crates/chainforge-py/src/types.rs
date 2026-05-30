@@ -30,14 +30,11 @@ impl PyMerkleTree {
         match self.inner.proof(index) {
             Some(proof) => {
                 let dict = pyo3::types::PyDict::new(py);
-                let siblings: Vec<Bound<'_, PyBytes>> = proof
-                    .siblings
-                    .iter()
-                    .map(|s| PyBytes::new(py, s))
-                    .collect();
+                let siblings: Vec<Bound<'_, PyBytes>> =
+                    proof.siblings.iter().map(|s| PyBytes::new(py, s)).collect();
                 dict.set_item("siblings", siblings)?;
                 dict.set_item("indices", proof.indices.clone())?;
-                Ok(Some(dict.into_pyobject(py).unwrap().into_py(py)))
+                Ok(Some(dict.into_pyobject(py).unwrap().into_any().unbind()))
             }
             None => Ok(None),
         }
@@ -118,7 +115,8 @@ impl PyTransaction {
     #[staticmethod]
     fn decode_rlp(py: Python, data: &[u8]) -> PyResult<PyObject> {
         let tx = Transaction::decode_rlp(data).map_err(into_py_err)?;
-        Py::new(py, PyTransaction { inner: tx }).map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
+        Py::new(py, PyTransaction { inner: tx })
+            .map(|p| p.into_pyobject(py).unwrap().into_any().unbind())
     }
 
     #[getter]
@@ -155,6 +153,7 @@ pub struct PyBlockHeader {
 #[pymethods]
 impl PyBlockHeader {
     #[new]
+    #[allow(clippy::too_many_arguments)]
     fn new(
         parent_hash: [u8; 32],
         number: u64,

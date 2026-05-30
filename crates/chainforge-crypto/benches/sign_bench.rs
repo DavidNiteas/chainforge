@@ -5,9 +5,7 @@ fn bench_sign(c: &mut Criterion) {
     let sk = SecretKey::random();
     let msg = b"benchmark message";
 
-    c.bench_function("ecdsa_sign", |b| {
-        b.iter(|| sk.sign(black_box(msg)))
-    });
+    c.bench_function("ecdsa_sign", |b| b.iter(|| sk.sign(black_box(msg))));
 
     let sig = sk.sign(msg).unwrap();
     let pk = sk.public_key();

@@ -37,9 +37,9 @@ impl RocksDBEngine {
     }
 
     fn cf_handle(&self, cf: &str) -> Result<&rocksdb::ColumnFamily, ChainforgeError> {
-        self.db.cf_handle(cf).ok_or_else(|| {
-            ChainforgeError::Storage(format!("column family '{}' not found", cf))
-        })
+        self.db
+            .cf_handle(cf)
+            .ok_or_else(|| ChainforgeError::Storage(format!("column family '{}' not found", cf)))
     }
 }
 
@@ -48,28 +48,34 @@ impl RocksDBEngine {
 impl StorageEngine for RocksDBEngine {
     async fn get(&self, key: &[u8]) -> Result<Option<Vec<u8>>, ChainforgeError> {
         let cf = self.cf_handle(CF_STATE)?;
-        let result = self.db.get_cf(cf, key)
+        let result = self
+            .db
+            .get_cf(cf, key)
             .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
         Ok(result)
     }
 
     async fn put(&self, key: &[u8], value: &[u8]) -> Result<(), ChainforgeError> {
         let cf = self.cf_handle(CF_STATE)?;
-        self.db.put_cf(cf, key, value)
+        self.db
+            .put_cf(cf, key, value)
             .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
         Ok(())
     }
 
     async fn delete(&self, key: &[u8]) -> Result<(), ChainforgeError> {
         let cf = self.cf_handle(CF_STATE)?;
-        self.db.delete_cf(cf, key)
+        self.db
+            .delete_cf(cf, key)
             .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
         Ok(())
     }
 
     async fn contains(&self, key: &[u8]) -> Result<bool, ChainforgeError> {
         let cf = self.cf_handle(CF_STATE)?;
-        let result = self.db.get_cf(cf, key)
+        let result = self
+            .db
+            .get_cf(cf, key)
             .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
         Ok(result.is_some())
     }
@@ -90,7 +96,8 @@ impl BatchWrite for RocksDBEngine {
                 None => batch.delete_cf(cf, &key),
             };
         }
-        self.db.write(batch)
+        self.db
+            .write(batch)
             .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
         Ok(())
     }
@@ -136,7 +143,12 @@ mod tests {
     async fn test_write_batch() {
         let (db, path) = temp_db();
         let items = (0..10)
-            .map(|i| (format!("key{}", i).into_bytes(), Some(format!("value{}", i).into_bytes())))
+            .map(|i| {
+                (
+                    format!("key{}", i).into_bytes(),
+                    Some(format!("value{}", i).into_bytes()),
+                )
+            })
             .collect();
         db.write_batch(items).await.unwrap();
 

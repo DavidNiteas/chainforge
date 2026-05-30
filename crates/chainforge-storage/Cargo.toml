@@ -19,3 +19,9 @@ lru = "0.12"
 [dev-dependencies]
 proptest = "1.5"
 tokio = { version = "1", features = ["rt", "macros"] }
+criterion = "0.5"
+tempfile = "3"
+
+[[bench]]
+name = "rocksdb_bench"
+harness = false

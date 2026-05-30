@@ -4,7 +4,7 @@
 
 **Chainforge** 是一个计划中的高性能区块链核心库，目标是用 **Rust** 实现底层密码学、共识原语与数据结构，并通过 **PyO3** 向 Python 提供符合 Python 生态习惯的绑定层。目标用户为数据科学家、量化研究员及需要快速原型验证的区块链开发者。
 
-**当前状态：** Phase 01、Phase 1.5（工具链修复）、Phase 02（跨语言错误体系）已完成。Rust workspace 已配置完整 MinGW-w64 工具链（`.tools/mingw64/`），`cargo test --workspace`、`pixi run dev-build`、Python 异常映射测试均通过。
+**当前状态：** Phase 01 ~ Phase 11 框架期全部完成。P2P、Mempool、Block Producer、Consensus、EVM、RPC、Light Client 共 7 个迭代方向全部完成。所有 Rust 测试（101 个）、Python 测试（31 个）、Clippy、格式化检查均通过，`pixi run typecheck` 零错误。
 
 ---
 
@@ -18,19 +18,36 @@
 | `rust-toolchain.toml` | Rust 工具链锁定（stable + rustfmt + clippy） |
 | `pixi.toml` | Pixi 项目配置与 task 定义 |
 | `pyproject.toml` | Python 包元数据 + maturin 配置 |
-| `design/design.md` | 747 行的总纲设计文档 |
-| `design/phases/phase-01.md` ~ `phase-11.md` | 11 份分阶段实施文档 |
-| `crates/chainforge-core/` | `ChainforgeError` 定义与 Rust 单元测试 |
-| `crates/chainforge-crypto/` | 空 crate：密码学原语 |
-| `crates/chainforge-storage/` | 空 crate：KV 存储抽象 |
-| `crates/chainforge-py/` | PyO3 绑定层（含错误映射与异常抛出测试函数） |
+| `design/framework/design.md` | v0.1.0 总纲设计文档（原 design.md） |
+| `design/framework/phases/phase-01.md` ~ `phase-11.md` | v0.1.0 分阶段实施文档 |
+| `design/p2p/design.md` | P2P 网络层设计 |
+| `design/consensus/design.md` | 共识算法（HotStuff）设计 |
+| `design/evm/design.md` | EVM 兼容执行层设计 |
+| `design/rpc/design.md` | JSON-RPC API 层设计 |
+| `design/mempool/design.md` | 交易池（Mempool）设计 |
+| `design/block-producer/design.md` | 区块生产者设计 |
+| `design/light-client/design.md` | 轻客户端设计 |
+| `crates/chainforge-error/` | 统一错误类型 `ChainforgeError`（thiserror） |
+| `crates/chainforge-crypto/` | 密码学原语：SHA-256、Keccak-256、RIPEMD-160、secp256k1 ECDSA |
+| `crates/chainforge-storage/` | 存储抽象 Trait + `InMemoryStorage` + `CachedStorage`（LRU） |
+| `crates/chainforge-core/` | 核心结构：Transaction、BlockHeader、Block、MerkleTree、RLP 编解码 |
+| `crates/chainforge-py/` | PyO3 绑定层：暴露 Transaction/BlockHeader/MerkleTree/SecretKey/PublicKey/InMemoryStorage/RocksDB + 错误映射 |
+| `crates/chainforge-p2p/` | P2P 网络层：完整 6 阶段（Noise 握手、Message 编解码、Kademlia 路由表、Gossip 广播、Sync 同步、Node 集成）|
+| `crates/chainforge-mempool/` | 交易内存池：完整 4 阶段（CRUD、优先级队列、nonce 验证、容量限制）|
+| `crates/chainforge-block-producer/` | 区块生产者：BlockBuilder、从 mempool 取交易构建区块（BP-01 已完成）|
+| `crates/chainforge-consensus/` | HotStuff 共识：BlockTree、Vote、QC、SafetyRules、Pacemaker、ConsensusEngine（CON-01~06 已完成）|
+| `crates/chainforge-evm/` | EVM 执行层：revm 集成、转账、合约部署、DatabaseCommit（EVM-01~06 已完成）|
+| `crates/chainforge-rpc/` | JSON-RPC 服务层：axum HTTP + WebSocket、eth_sendRawTransaction/eth_getBalance/eth_call/eth_subscribe（RPC-01~04 已完成）|
+| `crates/chainforge-core/src/light_client.rs` | 轻客户端：区块头同步验证 + MerkleProof 交易包含验证（LC-01~02 已完成）|
+| `crates/chainforge-core/src/mpt.rs` | MPT（Merkle Patricia Trie）证明验证（LC-03 已完成）|
 | `.cargo/config.toml` | 指定 MinGW linker / ar 路径 |
-| `src/tests/unit/test_exceptions.py` | Python 异常映射测试 |
-| `src/chainforge/__init__.py` | Python 包入口 |
+| `src/chainforge/__init__.py` | Python 包入口（统一导出公共 API + `__all__`） |
+| `src/chainforge/types.py` | Pydantic v2 输入校验模型（`TxInput`、`BlockInput`） |
+| `src/chainforge/client.py` | 高层 Pythonic API（`open_db()` 异步上下文管理器） |
 | `src/chainforge/py.typed` | PEP 561 类型标记 |
 | `src/tests/conftest.py` | pytest 共享配置 |
-| `src/tests/unit/` | 单元测试目录 |
-| `src/tests/integration/` | 集成测试目录 |
+| `src/tests/unit/` | 单元测试目录（异常、密码学、Merkle、存储、类型、Pydantic、客户端） |
+| `src/tests/integration/` | 集成测试目录（端到端链路测试） |
 
 **注意：** `design/` 下的文档均使用中文撰写。
 
@@ -87,7 +104,7 @@ chainforge/
         └── ci.yml
 ```
 
-**当前实际状态：** 上述目录与文件均不存在，仅在 `design.md` 及分阶段文档中做了详细规格说明。
+**当前实际状态：** 上述目录结构已基本实现。所有计划中的 Rust crates、Python 包、测试目录及配置文件均已创建并通过测试。唯一尚未创建的是 `.github/workflows/ci.yml`（Phase 11）。
 
 ---
 
@@ -255,8 +272,20 @@ pixi run test
 | Phase 07 | 存储层 Trait + 内存后端 | Phase 02 |
 | Phase 08 | RocksDB 集成与缓存 | Phase 07 |
 | Phase 09 | PyO3 完整绑定层 | Phase 02 ~ 08 |
-| Phase 10 | Python API 与类型校验层（Pydantic / mypy） | Phase 09 |
-| Phase 11 | CI/CD 与基准测试 | Phase 01 ~ 10 |
+| Phase 10 | Python API 与类型校验层（Pydantic / mypy） | Phase 09 | ✅ 已完成 |
+| Phase 11 | CI/CD 与基准测试 | Phase 01 ~ 10 | ✅ 已完成 |
+
+### 迭代开发方向（v0.2.0+）
+
+| 方向 | 目标 | 当前状态 |
+|------|------|----------|
+| P2P 网络层 | 节点发现、消息广播、区块同步 | 📝 设计文档已创建 |
+| 共识算法 | HotStuff BFT 共识 | 📝 设计文档已创建 |
+| EVM 执行层 | 以太坊兼容合约执行 | 📝 设计文档已创建 |
+| JSON-RPC | 以太坊兼容 RPC 接口 | ✅ 已完成（RPC-01~04）|
+| Mempool | 交易池管理 | 📝 设计文档已创建 |
+| Block Producer | 区块构建与出块 | 📝 设计文档已创建 |
+| Light Client | 轻量验证客户端 | ✅ LC-01~04 已完成 |
 
 ---
 

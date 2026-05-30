@@ -106,11 +106,7 @@ impl PublicKey {
             1 => RecoveryId::One,
             2 => RecoveryId::Two,
             3 => RecoveryId::Three,
-            _ => {
-                return Err(ChainforgeError::Crypto(
-                    "invalid recovery id".to_string(),
-                ))
-            }
+            _ => return Err(ChainforgeError::Crypto("invalid recovery id".to_string())),
         };
         let recoverable = RecoverableSignature::from_compact(&sig.bytes, recid)
             .map_err(|e| ChainforgeError::Crypto(e.to_string()))?;
@@ -152,7 +148,10 @@ impl Signature {
         }
         let mut arr = [0u8; 64];
         arr.copy_from_slice(bytes);
-        Ok(Signature { bytes: arr, recovery_id })
+        Ok(Signature {
+            bytes: arr,
+            recovery_id,
+        })
     }
 }
 

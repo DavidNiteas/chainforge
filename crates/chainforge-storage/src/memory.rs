@@ -27,32 +27,36 @@ impl Default for InMemoryStorage {
 #[async_trait]
 impl StorageEngine for InMemoryStorage {
     async fn get(&self, key: &[u8]) -> Result<Option<Vec<u8>>, ChainforgeError> {
-        let data = self.data.read().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
+        let data = self
+            .data
+            .read()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
         Ok(data.get(key).cloned())
     }
 
     async fn put(&self, key: &[u8], value: &[u8]) -> Result<(), ChainforgeError> {
-        let mut data = self.data.write().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
+        let mut data = self
+            .data
+            .write()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
         data.insert(key.to_vec(), value.to_vec());
         Ok(())
     }
 
     async fn delete(&self, key: &[u8]) -> Result<(), ChainforgeError> {
-        let mut data = self.data.write().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
+        let mut data = self
+            .data
+            .write()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
         data.remove(key);
         Ok(())
     }
 
     async fn contains(&self, key: &[u8]) -> Result<bool, ChainforgeError> {
-        let data = self.data.read().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
+        let data = self
+            .data
+            .read()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
         Ok(data.contains_key(key))
     }
 }
@@ -63,9 +67,10 @@ impl BatchWrite for InMemoryStorage {
         &self,
         items: Vec<(Vec<u8>, Option<Vec<u8>>)>,
     ) -> Result<(), ChainforgeError> {
-        let mut data = self.data.write().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
+        let mut data = self
+            .data
+            .write()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
         for (key, value) in items {
             match value {
                 Some(v) => data.insert(key, v),
@@ -90,12 +95,11 @@ impl Snapshot for InMemorySnapshot {
 #[async_trait]
 impl Snapshotable for InMemoryStorage {
     async fn snapshot(&self) -> Result<Box<dyn Snapshot>, ChainforgeError> {
-        let data = self.data.read().map_err(|_| {
-            ChainforgeError::Storage("lock poisoned".to_string())
-        })?;
-        Ok(Box::new(InMemorySnapshot {
-            data: data.clone(),
-        }))
+        let data = self
+            .data
+            .read()
+            .map_err(|_| ChainforgeError::Storage("lock poisoned".to_string()))?;
+        Ok(Box::new(InMemorySnapshot { data: data.clone() }))
     }
 }
 
@@ -107,7 +111,10 @@ mod tests {
     async fn test_put_get_roundtrip() {
         let storage = InMemoryStorage::new();
         storage.put(b"key1", b"value1").await.unwrap();
-        assert_eq!(storage.get(b"key1").await.unwrap(), Some(b"value1".to_vec()));
+        assert_eq!(
+            storage.get(b"key1").await.unwrap(),
+            Some(b"value1".to_vec())
+        );
     }
 
     #[tokio::test]
@@ -130,7 +137,12 @@ mod tests {
     async fn test_write_batch() {
         let storage = InMemoryStorage::new();
         let items = (0..100)
-            .map(|i| (format!("key{}", i).into_bytes(), Some(format!("value{}", i).into_bytes())))
+            .map(|i| {
+                (
+                    format!("key{}", i).into_bytes(),
+                    Some(format!("value{}", i).into_bytes()),
+                )
+            })
             .collect();
         storage.write_batch(items).await.unwrap();
         for i in 0..100 {
@@ -146,10 +158,13 @@ mod tests {
         let storage = InMemoryStorage::new();
         storage.put(b"a", b"1").await.unwrap();
         storage.put(b"b", b"2").await.unwrap();
-        storage.write_batch(vec![
-            (b"a".to_vec(), Some(b"updated".to_vec())),
-            (b"b".to_vec(), None),
-        ]).await.unwrap();
+        storage
+            .write_batch(vec![
+                (b"a".to_vec(), Some(b"updated".to_vec())),
+                (b"b".to_vec(), None),
+            ])
+            .await
+            .unwrap();
         assert_eq!(storage.get(b"a").await.unwrap(), Some(b"updated".to_vec()));
         assert_eq!(storage.get(b"b").await.unwrap(), None);
     }

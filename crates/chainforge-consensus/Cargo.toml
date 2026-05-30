@@ -1,0 +1,14 @@
+[package]
+name = "chainforge-consensus"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+chainforge-error = { path = "../chainforge-error" }
+chainforge-core = { path = "../chainforge-core" }
+chainforge-crypto = { path = "../chainforge-crypto" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }

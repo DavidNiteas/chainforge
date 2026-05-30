@@ -11,3 +11,8 @@ chainforge-crypto = { path = "../chainforge-crypto" }
 
 [dev-dependencies]
 proptest = "1.5"
+criterion = "0.5"
+
+[[bench]]
+name = "merkle_bench"
+harness = false

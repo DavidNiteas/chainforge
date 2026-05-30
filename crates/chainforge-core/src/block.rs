@@ -57,7 +57,9 @@ impl BlockHeader {
         txs_root.copy_from_slice(&items[7]);
 
         fn bytes_to_u64(bytes: &[u8]) -> u64 {
-            if bytes.is_empty() { 0 } else {
+            if bytes.is_empty() {
+                0
+            } else {
                 let mut arr = [0u8; 8];
                 arr[8 - bytes.len()..].copy_from_slice(bytes);
                 u64::from_be_bytes(arr)
@@ -91,12 +93,62 @@ pub struct Block {
 impl Block {
     /// 计算交易列表的 Merkle 树根并赋值给 header.txs_root
     pub fn compute_txs_root(&mut self) {
-        let leaves: Vec<[u8; 32]> = self
-            .transactions
-            .iter()
-            .map(|tx| tx.hash())
-            .collect();
+        let leaves: Vec<[u8; 32]> = self.transactions.iter().map(|tx| tx.hash()).collect();
         self.header.txs_root = MerkleTree::new(leaves).root();
+    }
+
+    /// RLP 编码区块
+    pub fn encode_rlp(&self) -> Vec<u8> {
+        use crate::rlp::RlpEncoder;
+        let mut enc = RlpEncoder::new();
+        enc.encode_list(|e| {
+            e.encode_bytes(&self.header.encode_rlp());
+            e.encode_list(|e2| {
+                for tx in &self.transactions {
+                    e2.encode_bytes(&tx.encode_rlp());
+                }
+            });
+            e.encode_list(|e2| {
+                for uncle in &self.uncle_headers {
+                    e2.encode_bytes(&uncle.encode_rlp());
+                }
+            });
+        });
+        enc.finish()
+    }
+
+    /// RLP 解码区块
+    pub fn decode_rlp(data: &[u8]) -> Result<Self, ChainforgeError> {
+        use crate::rlp::RlpDecoder;
+        let mut dec = RlpDecoder::new(data);
+        let items: Vec<Vec<u8>> = dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        if items.len() != 3 {
+            return Err(ChainforgeError::Serialization(format!(
+                "expected 3 RLP items for Block, got {}",
+                items.len()
+            )));
+        }
+        let header = BlockHeader::decode_rlp(&items[0])?;
+
+        let mut tx_dec = RlpDecoder::new(&items[1]);
+        let tx_bytes: Vec<Vec<u8>> = tx_dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        let transactions: Vec<Transaction> = tx_bytes
+            .iter()
+            .map(|b| Transaction::decode_rlp(b))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let mut uncle_dec = RlpDecoder::new(&items[2]);
+        let uncle_bytes: Vec<Vec<u8>> = uncle_dec.decode_list(|d| Ok(d.decode_bytes()?.to_vec()))?;
+        let uncle_headers: Vec<BlockHeader> = uncle_bytes
+            .iter()
+            .map(|b| BlockHeader::decode_rlp(b))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(Block {
+            header,
+            transactions,
+            uncle_headers,
+        })
     }
 }
 

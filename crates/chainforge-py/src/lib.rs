@@ -12,7 +12,9 @@ use types::{PyBlockHeader, PyMerkleTree, PyTransaction};
 
 #[pyfunction]
 fn raise_invalid_parameter(msg: String) -> PyResult<()> {
-    Err(crate::error::into_py_err(ChainforgeError::InvalidParameter(msg)))
+    Err(crate::error::into_py_err(
+        ChainforgeError::InvalidParameter(msg),
+    ))
 }
 
 #[pyfunction]
@@ -27,12 +29,16 @@ fn raise_storage(msg: String) -> PyResult<()> {
 
 #[pyfunction]
 fn raise_serialization(msg: String) -> PyResult<()> {
-    Err(crate::error::into_py_err(ChainforgeError::Serialization(msg)))
+    Err(crate::error::into_py_err(ChainforgeError::Serialization(
+        msg,
+    )))
 }
 
 #[pyfunction]
 fn raise_state_root_mismatch(expected: String, actual: String) -> PyResult<()> {
-    Err(crate::error::into_py_err(ChainforgeError::StateRootMismatch { expected, actual }))
+    Err(crate::error::into_py_err(
+        ChainforgeError::StateRootMismatch { expected, actual },
+    ))
 }
 
 #[pyfunction]
@@ -43,7 +49,10 @@ fn keccak256(data: &[u8]) -> [u8; 32] {
 /// 初始化 chainforge._internal 模块
 #[pymodule]
 fn _internal(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add("ChainforgeError", m.py().get_type::<pyo3::exceptions::PyRuntimeError>())?;
+    m.add(
+        "ChainforgeError",
+        m.py().get_type::<pyo3::exceptions::PyRuntimeError>(),
+    )?;
 
     m.add_class::<PyMerkleTree>()?;
     m.add_class::<PyTransaction>()?;

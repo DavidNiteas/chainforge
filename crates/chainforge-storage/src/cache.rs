@@ -25,18 +25,20 @@ impl<E: StorageEngine> CachedStorage<E> {
 impl<E: StorageEngine> StorageEngine for CachedStorage<E> {
     async fn get(&self, key: &[u8]) -> Result<Option<Vec<u8>>, ChainforgeError> {
         {
-            let mut cache = self.cache.write().map_err(|_| {
-                ChainforgeError::Storage("cache lock poisoned".to_string())
-            })?;
+            let mut cache = self
+                .cache
+                .write()
+                .map_err(|_| ChainforgeError::Storage("cache lock poisoned".to_string()))?;
             if let Some(value) = cache.get(key) {
                 return Ok(Some(value.clone()));
             }
         }
         let value = self.inner.get(key).await?;
         if let Some(ref v) = value {
-            let mut cache = self.cache.write().map_err(|_| {
-                ChainforgeError::Storage("cache lock poisoned".to_string())
-            })?;
+            let mut cache = self
+                .cache
+                .write()
+                .map_err(|_| ChainforgeError::Storage("cache lock poisoned".to_string()))?;
             cache.put(key.to_vec(), v.clone());
         }
         Ok(value)
@@ -44,27 +46,30 @@ impl<E: StorageEngine> StorageEngine for CachedStorage<E> {
 
     async fn put(&self, key: &[u8], value: &[u8]) -> Result<(), ChainforgeError> {
         self.inner.put(key, value).await?;
-        let mut cache = self.cache.write().map_err(|_| {
-            ChainforgeError::Storage("cache lock poisoned".to_string())
-        })?;
+        let mut cache = self
+            .cache
+            .write()
+            .map_err(|_| ChainforgeError::Storage("cache lock poisoned".to_string()))?;
         cache.put(key.to_vec(), value.to_vec());
         Ok(())
     }
 
     async fn delete(&self, key: &[u8]) -> Result<(), ChainforgeError> {
         self.inner.delete(key).await?;
-        let mut cache = self.cache.write().map_err(|_| {
-            ChainforgeError::Storage("cache lock poisoned".to_string())
-        })?;
+        let mut cache = self
+            .cache
+            .write()
+            .map_err(|_| ChainforgeError::Storage("cache lock poisoned".to_string()))?;
         cache.pop(key);
         Ok(())
     }
 
     async fn contains(&self, key: &[u8]) -> Result<bool, ChainforgeError> {
         {
-            let cache = self.cache.read().map_err(|_| {
-                ChainforgeError::Storage("cache lock poisoned".to_string())
-            })?;
+            let cache = self
+                .cache
+                .read()
+                .map_err(|_| ChainforgeError::Storage("cache lock poisoned".to_string()))?;
             if cache.contains(key) {
                 return Ok(true);
             }
