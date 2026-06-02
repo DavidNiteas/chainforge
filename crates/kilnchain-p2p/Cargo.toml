@@ -1,0 +1,18 @@
+[package]
+name = "kilnchain-p2p"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
+kilnchain-core = { path = "../kilnchain-core" }
+kilnchain-mempool = { path = "../kilnchain-mempool" }
+tokio = { version = "1", features = ["net", "rt", "io-util", "time", "macros"] }
+snow = { version = "0.9", default-features = false, features = ["default-resolver"] }
+bincode = "1.3"
+
+[dev-dependencies]
+tokio-test = "0.4"

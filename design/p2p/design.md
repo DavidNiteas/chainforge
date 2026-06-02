@@ -2,7 +2,7 @@
 
 ## 目标
 
-为 Chainforge 构建去中心化点对点网络层，实现节点发现、消息广播、区块与交易同步。作为迭代开发阶段的第一个扩展方向，P2P 层是共识算法和全节点同步的基础设施。
+为 Kilnchain 构建去中心化点对点网络层，实现节点发现、消息广播、区块与交易同步。作为迭代开发阶段的第一个扩展方向，P2P 层是共识算法和全节点同步的基础设施。
 
 ## 技术选型
 
@@ -16,10 +16,10 @@
 
 ## 模块划分
 
-### `chainforge-p2p` crate（新增）
+### `kilnchain-p2p` crate（新增）
 
 ```
-crates/chainforge-p2p/
+crates/kilnchain-p2p/
 ├── Cargo.toml
 └── src/
     ├── lib.rs          # 模块导出
@@ -69,8 +69,8 @@ pub enum Message {
 
 ```
 Node (p2p)
-  ├── 接收 Transaction → 验证 → 提交到 mempool (chainforge-core)
-  ├── 接收 Block → 验证 → 写入存储 (chainforge-storage)
+  ├── 接收 Transaction → 验证 → 提交到 mempool (kilnchain-core)
+  ├── 接收 Block → 验证 → 写入存储 (kilnchain-storage)
   ├── 发送 BlockRequest → 从 peers 拉取缺失区块
   └── 本地生成 Block → 广播到所有 peers
 ```

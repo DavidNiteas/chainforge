@@ -2,7 +2,7 @@
 
 ## 目标
 
-为 Chainforge 提供以太坊兼容的 JSON-RPC 接口，使现有工具（MetaMask、Hardhat、Ethers.js）能够直接连接和交互。
+为 Kilnchain 提供以太坊兼容的 JSON-RPC 接口，使现有工具（MetaMask、Hardhat、Ethers.js）能够直接连接和交互。
 
 ## 技术选型
 

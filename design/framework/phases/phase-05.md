@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 `chainforge-core` 中实现二叉 SHA-256 Merkle Tree，支持根哈希计算、证明生成与验证。以 property test（proptest）为主要验证手段，确保算法正确性。
+在 `kilnchain-core` 中实现二叉 SHA-256 Merkle Tree，支持根哈希计算、证明生成与验证。以 property test（proptest）为主要验证手段，确保算法正确性。
 
 ---
 
@@ -12,14 +12,14 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-core/src/lib.rs` | 导出 `merkle` 模块 |
-| `crates/chainforge-core/src/merkle.rs` | `MerkleTree`, `MerkleProof` |
+| `crates/kilnchain-core/src/lib.rs` | 导出 `merkle` 模块 |
+| `crates/kilnchain-core/src/merkle.rs` | `MerkleTree`, `MerkleProof` |
 
 ### 测试
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-core/src/merkle.rs` (内联 `#[cfg(test)]`) | 单元测试 + proptest |
+| `crates/kilnchain-core/src/merkle.rs` (内联 `#[cfg(test)]`) | 单元测试 + proptest |
 
 ---
 
@@ -66,7 +66,7 @@ pub const EMPTY_ROOT: [u8; 32] = [0u8; 32];
 
 ## 验收标准（必须全部通过）
 
-- [ ] `cargo test -p chainforge-core` 全部通过（含 proptest）
+- [ ] `cargo test -p kilnchain-core` 全部通过（含 proptest）
 - [ ] `test_empty_merkle_root`：空树返回 `EMPTY_ROOT`
 - [ ] `test_single_leaf`：单叶子树根等于该叶子值
 - [ ] `test_proof_roundtrip`：对 100 个叶子的树，随机选 10 个索引生成证明并验证通过

@@ -2,7 +2,7 @@
 
 import pytest
 
-from chainforge import (
+from kilnchain import (
     Block,
     BlockHeader,
     BlockTree,

@@ -12,9 +12,9 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-storage/src/lib.rs` | 条件编译导出 `rocksdb` 模块 |
-| `crates/chainforge-storage/src/rocksdb.rs` | `RocksDBEngine` 实现 |
-| `crates/chainforge-storage/src/cache.rs` | `LRUCache` 包装层（可选，可先用 `lru` crate） |
+| `crates/kilnchain-storage/src/lib.rs` | 条件编译导出 `rocksdb` 模块 |
+| `crates/kilnchain-storage/src/rocksdb.rs` | `RocksDBEngine` 实现 |
+| `crates/kilnchain-storage/src/cache.rs` | `LRUCache` 包装层（可选，可先用 `lru` crate） |
 
 ### Cargo.toml 变更
 
@@ -32,7 +32,7 @@ lru = "0.12"  # 用于缓存层
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-storage/src/rocksdb.rs` (内联测试) | 持久化、列族隔离测试 |
+| `crates/kilnchain-storage/src/rocksdb.rs` (内联测试) | 持久化、列族隔离测试 |
 
 ---
 
@@ -57,12 +57,12 @@ pub struct RocksDBEngine {
 }
 
 impl RocksDBEngine {
-    pub fn open(path: &std::path::Path) -> Result<Self, ChainforgeError> {
+    pub fn open(path: &std::path::Path) -> Result<Self, KilnchainError> {
         let mut opts = rocksdb::Options::default();
         opts.create_if_missing(true);
         opts.create_missing_column_families(true);
         let db = rocksdb::DB::open_cf(&opts, path, ALL_CFS)
-            .map_err(|e| ChainforgeError::Storage(e.to_string()))?;
+            .map_err(|e| KilnchainError::Storage(e.to_string()))?;
         Ok(Self { db })
     }
 }
@@ -83,7 +83,7 @@ pub struct CachedStorage<E: StorageEngine> {
 
 ## 验收标准（必须全部通过）
 
-- [ ] `cargo test -p chainforge-storage --all-features` 全部通过
+- [ ] `cargo test -p kilnchain-storage --all-features` 全部通过
 - [ ] `cargo check --workspace` 在 Windows 上通过（或 `storage-mem` feature 能绕过 RocksDB）
 - [ ] 持久化测试：临时目录 → 写入 → `drop(db)` → 重新 `open` → 读取数据一致
 - [ ] 列族隔离：向 `blocks` 写入的 key，在 `state` 中 `get` 返回 `None`

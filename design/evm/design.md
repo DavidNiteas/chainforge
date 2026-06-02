@@ -2,7 +2,7 @@
 
 ## 目标
 
-为 Chainforge 添加以太坊虚拟机（EVM）兼容的执行层，使现有 Solidity 智能合约能够部署和运行。这是区块链平台从「账本」升级为「可编程平台」的关键步骤。
+为 Kilnchain 添加以太坊虚拟机（EVM）兼容的执行层，使现有 Solidity 智能合约能够部署和运行。这是区块链平台从「账本」升级为「可编程平台」的关键步骤。
 
 ## 技术选型
 
@@ -16,10 +16,10 @@
 
 ## 模块划分
 
-### `chainforge-evm` crate（新增）
+### `kilnchain-evm` crate（新增）
 
 ```
-crates/chainforge-evm/
+crates/kilnchain-evm/
 ├── Cargo.toml
 └── src/
     ├── lib.rs           # 模块导出
@@ -57,9 +57,9 @@ pub struct EvmExecutor {
 ```
 EvmExecutor
   ├── 接收 Transaction → 解析 to/data/value → 调用 revm
-  ├── 读写账户状态 → 通过 StateManager → 底层 chainforge-storage
+  ├── 读写账户状态 → 通过 StateManager → 底层 kilnchain-storage
   ├── 计算状态根 → MerklePatriciaTrie → 更新 BlockHeader.state_root
-  ├── 使用 chainforge-crypto 的 keccak256 计算地址和 trie 节点
+  ├── 使用 kilnchain-crypto 的 keccak256 计算地址和 trie 节点
   └── 区块确认后，状态变更批量写入持久存储
 ```
 

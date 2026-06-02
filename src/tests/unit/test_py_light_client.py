@@ -4,7 +4,7 @@ import pytest
 
 
 def test_light_client_genesis():
-    from chainforge._internal import BlockHeader, LightClient
+    from kilnchain._internal import BlockHeader, LightClient
 
     genesis = BlockHeader(
         parent_hash=b"\x00" * 32,
@@ -22,7 +22,7 @@ def test_light_client_genesis():
 
 
 def test_light_client_add_header():
-    from chainforge._internal import BlockHeader, LightClient
+    from kilnchain._internal import BlockHeader, LightClient
 
     genesis = BlockHeader(
         parent_hash=b"\x00" * 32,
@@ -51,7 +51,7 @@ def test_light_client_add_header():
 
 
 def test_light_client_rejects_bad_parent():
-    from chainforge._internal import BlockHeader, LightClient
+    from kilnchain._internal import BlockHeader, LightClient
 
     genesis = BlockHeader(
         parent_hash=b"\x00" * 32,
@@ -79,7 +79,7 @@ def test_light_client_rejects_bad_parent():
 
 
 def test_mpt_proof_verify():
-    from chainforge._internal import MptProof
+    from kilnchain._internal import MptProof
 
     # MptProof 的构造和属性访问测试
     proof = MptProof(key=b"\xab", proof_nodes=[b"some_rlp_data"])

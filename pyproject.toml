@@ -3,7 +3,7 @@ requires = ["maturin>=1.7.0"]
 build-backend = "maturin"
 
 [project]
-name = "chainforge"
+name = "kilnchain"
 version = "0.1.0"
 description = "High-performance blockchain core library with Python bindings"
 readme = "README.md"
@@ -23,8 +23,8 @@ classifiers = [
 ]
 
 [tool.maturin]
-manifest-path = "crates/chainforge-py/Cargo.toml"
-module-name = "chainforge._internal"
+manifest-path = "crates/kilnchain-py/Cargo.toml"
+module-name = "kilnchain._internal"
 python-source = "src"
 features = ["extension-module"]
 

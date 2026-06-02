@@ -1,0 +1,15 @@
+[package]
+name = "kilnchain-evm"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-core = { path = "../kilnchain-core" }
+kilnchain-storage = { path = "../kilnchain-storage" }
+revm = { version = "14", features = ["std"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }

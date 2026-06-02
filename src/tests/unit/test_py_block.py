@@ -4,7 +4,7 @@ import pytest
 
 
 def test_block_builder():
-    from chainforge._internal import BlockBuilder, Transaction
+    from kilnchain._internal import BlockBuilder, Transaction
 
     txs = [
         Transaction(nonce=0, gas_price=10, gas_limit=21000, to=b"\xab" * 20, value=100),
@@ -26,7 +26,7 @@ def test_block_builder():
 
 
 def test_block_rlp_roundtrip():
-    from chainforge._internal import Block, BlockHeader, Transaction
+    from kilnchain._internal import Block, BlockHeader, Transaction
 
     tx = Transaction(nonce=0, gas_price=1, gas_limit=21000, to=b"\xab" * 20, value=100)
     header = BlockHeader(
@@ -47,7 +47,7 @@ def test_block_rlp_roundtrip():
 
 
 def test_mempool_produce_block():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool(capacity=100)
     pool.insert(

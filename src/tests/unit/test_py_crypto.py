@@ -4,7 +4,7 @@ import pytest
 
 
 def test_secret_key_generation():
-    from chainforge._internal import SecretKey
+    from kilnchain._internal import SecretKey
 
     sk = SecretKey()
     pk_bytes = sk.public_key()
@@ -13,7 +13,7 @@ def test_secret_key_generation():
 
 
 def test_sign_and_verify():
-    from chainforge._internal import SecretKey, PublicKey
+    from kilnchain._internal import SecretKey, PublicKey
 
     sk = SecretKey()
     pk = PublicKey.from_bytes(sk.public_key())
@@ -25,7 +25,7 @@ def test_sign_and_verify():
 
 
 def test_verify_rejects_wrong_message():
-    from chainforge._internal import SecretKey, PublicKey
+    from kilnchain._internal import SecretKey, PublicKey
 
     sk = SecretKey()
     pk = PublicKey.from_bytes(sk.public_key())
@@ -34,7 +34,7 @@ def test_verify_rejects_wrong_message():
 
 
 def test_sha256():
-    from chainforge._internal import sha256
+    from kilnchain._internal import sha256
 
     result = sha256(b"hello")
     assert isinstance(result, bytes)
@@ -42,7 +42,7 @@ def test_sha256():
 
 
 def test_ripemd160():
-    from chainforge._internal import ripemd160
+    from kilnchain._internal import ripemd160
 
     result = ripemd160(b"hello")
     assert isinstance(result, bytes)

@@ -1,0 +1,18 @@
+[package]
+name = "kilnchain-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
+
+[dev-dependencies]
+proptest = "1.5"
+criterion = "0.5"
+
+[[bench]]
+name = "merkle_bench"
+harness = false

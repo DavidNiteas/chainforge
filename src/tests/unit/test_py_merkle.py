@@ -4,7 +4,7 @@ import pytest
 
 
 def test_merkle_tree_root_returns_bytes():
-    from chainforge._internal import MerkleTree
+    from kilnchain._internal import MerkleTree
 
     leaves = [b"a", b"b", b"c"]
     tree = MerkleTree(leaves)
@@ -14,7 +14,7 @@ def test_merkle_tree_root_returns_bytes():
 
 
 def test_merkle_tree_proof_and_verify():
-    from chainforge._internal import MerkleTree, keccak256
+    from kilnchain._internal import MerkleTree, keccak256
 
     leaves = [b"a", b"b", b"c", b"d"]
     tree = MerkleTree(leaves)

@@ -5,7 +5,7 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_inmemory_storage_put_get():
-    from chainforge._internal import InMemoryStorage
+    from kilnchain._internal import InMemoryStorage
 
     db = InMemoryStorage()
     await db.put(b"key1", b"value1")
@@ -15,7 +15,7 @@ async def test_inmemory_storage_put_get():
 
 @pytest.mark.asyncio
 async def test_inmemory_storage_delete():
-    from chainforge._internal import InMemoryStorage
+    from kilnchain._internal import InMemoryStorage
 
     db = InMemoryStorage()
     await db.put(b"key1", b"value1")
@@ -26,7 +26,7 @@ async def test_inmemory_storage_delete():
 
 @pytest.mark.asyncio
 async def test_cached_storage_put_get():
-    from chainforge._internal import CachedStorage
+    from kilnchain._internal import CachedStorage
 
     db = CachedStorage(capacity=10)
     await db.put(b"key1", b"value1")
@@ -39,7 +39,7 @@ async def test_cached_storage_put_get():
 
 @pytest.mark.asyncio
 async def test_cached_storage_delete():
-    from chainforge._internal import CachedStorage
+    from kilnchain._internal import CachedStorage
 
     db = CachedStorage(capacity=10)
     await db.put(b"key1", b"value1")

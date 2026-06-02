@@ -1,0 +1,14 @@
+[package]
+name = "kilnchain-consensus"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-core = { path = "../kilnchain-core" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }

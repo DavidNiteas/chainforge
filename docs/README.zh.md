@@ -1,10 +1,10 @@
-# Chainforge 用户指南
+# Kilnchain 用户指南
 
 > [English Version](./README.en.md)
 
 ## 简介
 
-**Chainforge** 是一个高性能区块链核心库，使用 **Rust** 实现底层密码学、共识原语与数据结构，并通过 **PyO3** 向 Python 提供绑定。目标是让数据科学家、量化研究员及需要快速原型验证的区块链开发者，能够用熟悉的 Python 接口调用高性能 Rust 底层。
+**Kilnchain** 是一个高性能区块链核心库，使用 **Rust** 实现底层密码学、共识原语与数据结构，并通过 **PyO3** 向 Python 提供绑定。目标是让数据科学家、量化研究员及需要快速原型验证的区块链开发者，能够用熟悉的 Python 接口调用高性能 Rust 底层。
 
 ## 核心特性
 
@@ -33,8 +33,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-org/chainforge.git
-cd chainforge
+git clone https://github.com/DavidNiteas/kilnchain.git
+cd kilnchain
 
 # 使用 Pixi 安装依赖（同时安装 Python + Rust 工具链）
 pixi install
@@ -64,7 +64,7 @@ pixi run typecheck
 ### Python API
 
 ```python
-from chainforge import Transaction, BlockHeader, MerkleTree, SecretKey
+from kilnchain import Transaction, BlockHeader, MerkleTree, SecretKey
 
 # 创建交易
 tx = Transaction(nonce=0, gas_price=10, gas_limit=21000,
@@ -79,7 +79,7 @@ print("merkle root:", tree.root().hex())
 # ECDSA 签名
 sk = SecretKey.random()
 pk = sk.public_key()
-msg = b"hello chainforge"
+msg = b"hello kilnchain"
 sig = sk.sign(msg)
 assert pk.verify(msg, sig)
 ```
@@ -87,8 +87,8 @@ assert pk.verify(msg, sig)
 ### Rust API
 
 ```rust
-use chainforge_core::{Transaction, BlockHeader, MerkleTree};
-use chainforge_crypto::ecdsa::SecretKey;
+use kilnchain_core::{Transaction, BlockHeader, MerkleTree};
+use kilnchain_crypto::ecdsa::SecretKey;
 
 fn main() {
     let tx = Transaction {
@@ -112,26 +112,26 @@ fn main() {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Python Layer (src/chainforge)                              │
+│  Python Layer (src/kilnchain)                              │
 │  ├─ types.py        Pydantic 输入校验                        │
 │  ├─ client.py       高层 API（open_db 上下文管理器）          │
 │  └─ __init__.py     公共导出                                  │
 ├─────────────────────────────────────────────────────────────┤
-│  PyO3 FFI Layer (crates/chainforge-py)                      │
+│  PyO3 FFI Layer (crates/kilnchain-py)                      │
 │  ├─ PyTransaction / PyBlockHeader / PyMerkleTree            │
 │  ├─ PySecretKey / PyPublicKey                               │
 │  └─ PyStorageEngine (InMemory / RocksDB)                    │
 ├─────────────────────────────────────────────────────────────┤
 │  Rust Core (crates/)                                        │
-│  ├─ chainforge-core      交易、区块、Merkle、RLP            │
-│  ├─ chainforge-crypto    哈希、签名                         │
-│  ├─ chainforge-storage   KV 存储抽象                        │
-│  ├─ chainforge-p2p       网络层                            │
-│  ├─ chainforge-mempool   交易池                            │
-│  ├─ chainforge-consensus HotStuff BFT                      │
-│  ├─ chainforge-evm       revm 执行引擎                      │
-│  ├─ chainforge-rpc       JSON-RPC 服务                     │
-│  └─ chainforge-error     统一错误类型                       │
+│  ├─ kilnchain-core      交易、区块、Merkle、RLP            │
+│  ├─ kilnchain-crypto    哈希、签名                         │
+│  ├─ kilnchain-storage   KV 存储抽象                        │
+│  ├─ kilnchain-p2p       网络层                            │
+│  ├─ kilnchain-mempool   交易池                            │
+│  ├─ kilnchain-consensus HotStuff BFT                      │
+│  ├─ kilnchain-evm       revm 执行引擎                      │
+│  ├─ kilnchain-rpc       JSON-RPC 服务                     │
+│  └─ kilnchain-error     统一错误类型                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -143,7 +143,7 @@ fn main() {
 | `pixi run test` | 运行全部测试 |
 | `pixi run test-rust` | `cargo test --workspace` |
 | `pixi run test-py` | `pytest src/tests` |
-| `pixi run typecheck` | `mypy src/chainforge` |
+| `pixi run typecheck` | `mypy src/kilnchain` |
 | `pixi run fmt` | `cargo fmt && ruff format` |
 | `pixi run bench` | `cargo bench --workspace` |
 

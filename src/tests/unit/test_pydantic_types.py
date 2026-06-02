@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from chainforge.types import BlockInput, TxInput
+from kilnchain.types import BlockInput, TxInput
 
 
 def test_txinput_valid():

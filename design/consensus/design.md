@@ -2,17 +2,17 @@
 
 ## 目标
 
-为 Chainforge 实现拜占庭容错（BFT）共识算法，确保在部分节点故障或作恶的情况下，网络仍能就区块顺序达成一致。选择 **HotStuff** 作为核心算法（类 LibraBFT / DiemBFT），因其流水线设计、线性通信复杂度和成熟的工程实践。
+为 Kilnchain 实现拜占庭容错（BFT）共识算法，确保在部分节点故障或作恶的情况下，网络仍能就区块顺序达成一致。选择 **HotStuff** 作为核心算法（类 LibraBFT / DiemBFT），因其流水线设计、线性通信复杂度和成熟的工程实践。
 
 ## 技术选型
 
 | 组件 | 技术 | 理由 |
 |------|------|------|
 | 共识算法 | HotStuff | 流水线 BFT，线性复杂度，Chained HotStuff 优化 |
-| 密码学签名 | Secp256k1（已有） | 复用 chainforge-crypto 的 ECDSA |
+| 密码学签名 | Secp256k1（已有） | 复用 kilnchain-crypto 的 ECDSA |
 |  quorum 证书 | 聚合签名（可选） | 降低通信量，可先使用多签集合 |
 | 领导者轮换 | 轮询 + VRF（可选） | 简单轮询起步，VRF 增强公平性 |
-| 状态机复制 | 与 chainforge-storage 集成 | 共识决定的区块直接写入存储 |
+| 状态机复制 | 与 kilnchain-storage 集成 | 共识决定的区块直接写入存储 |
 
 ## 核心概念
 
@@ -41,10 +41,10 @@ Height=N+2:                         Prepare        →  PreCommit
 
 ## 模块划分
 
-### `chainforge-consensus` crate（新增）
+### `kilnchain-consensus` crate（新增）
 
 ```
-crates/chainforge-consensus/
+crates/kilnchain-consensus/
 ├── Cargo.toml
 └── src/
     ├── lib.rs          # 模块导出
@@ -64,7 +64,7 @@ pub struct ConsensusEngine {
     config: NodeConfig,
     block_tree: BlockTree,
     pacemaker: Pacemaker,
-    network: NetworkAdapter,  // 与 chainforge-p2p 交互
+    network: NetworkAdapter,  // 与 kilnchain-p2p 交互
     storage: Arc<dyn StorageEngine>,
 }
 
@@ -85,10 +85,10 @@ pub struct BlockTree {
 
 ```
 ConsensusEngine
-  ├── 通过 NetworkAdapter 发送/接收共识消息（依赖 chainforge-p2p）
-  ├── 从 mempool 获取待打包交易（依赖 chainforge-core Transaction）
-  ├── 将确认区块写入存储（依赖 chainforge-storage）
-  └── 使用 Secp256k1 签名/验证投票（依赖 chainforge-crypto）
+  ├── 通过 NetworkAdapter 发送/接收共识消息（依赖 kilnchain-p2p）
+  ├── 从 mempool 获取待打包交易（依赖 kilnchain-core Transaction）
+  ├── 将确认区块写入存储（依赖 kilnchain-storage）
+  └── 使用 Secp256k1 签名/验证投票（依赖 kilnchain-crypto）
 ```
 
 ## 迭代阶段划分

@@ -12,10 +12,10 @@
 
 | 文件 | 说明 |
 |------|------|
-| `src/chainforge/__init__.py` | 统一导出公共 API，定义 `__all__` |
-| `src/chainforge/types.py` | Pydantic 输入模型：`TxInput`, `BlockInput` 等 |
-| `src/chainforge/client.py` | 高层封装：`open_db()`, `create_transaction()` 等 |
-| `src/chainforge/py.typed` | PEP 561 标记文件 |
+| `src/kilnchain/__init__.py` | 统一导出公共 API，定义 `__all__` |
+| `src/kilnchain/types.py` | Pydantic 输入模型：`TxInput`, `BlockInput` 等 |
+| `src/kilnchain/client.py` | 高层封装：`open_db()`, `create_transaction()` 等 |
+| `src/kilnchain/py.typed` | PEP 561 标记文件 |
 
 ### 配置变更
 
@@ -38,19 +38,19 @@
 ### __init__.py 导出规范
 
 ```python
-from chainforge._internal import (
+from kilnchain._internal import (
     Transaction as _Transaction,
     BlockHeader as _BlockHeader,
     MerkleTree as _MerkleTree,
     Secp256k1 as _Secp256k1,
     RocksDB as _RocksDB,
-    ChainforgeError,
+    KilnchainError,
 )
 
 __all__ = [
     "TxInput", "BlockInput",
     "Transaction", "BlockHeader", "MerkleTree",
-    "Secp256k1", "open_db", "ChainforgeError",
+    "Secp256k1", "open_db", "KilnchainError",
 ]
 ```
 
@@ -80,7 +80,7 @@ class BlockInput(BaseModel):
 ```python
 from contextlib import contextmanager
 from typing import Generator
-from chainforge._internal import RocksDB as _RocksDB
+from kilnchain._internal import RocksDB as _RocksDB
 
 @contextmanager
 def open_db(path: str) -> Generator[_RocksDB, None, None]:

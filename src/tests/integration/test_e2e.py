@@ -2,7 +2,7 @@
 
 import pytest
 
-from chainforge import (
+from kilnchain import (
     BlockHeader,
     MerkleTree,
     PublicKey,
@@ -14,7 +14,7 @@ from chainforge import (
 def test_transaction_sign_verify_roundtrip():
     sk = SecretKey()
     pk = PublicKey.from_bytes(sk.public_key())
-    msg = b"hello chainforge"
+    msg = b"hello kilnchain"
     sig = sk.sign(msg)
     assert pk.verify(msg, sig)
 
@@ -26,7 +26,7 @@ def test_transaction_merkle_tree_roundtrip():
     assert isinstance(root, bytes)
     assert len(root) == 32
 
-    from chainforge._internal import keccak256
+    from kilnchain._internal import keccak256
 
     proof = tree.proof(0)
     leaf_hash = keccak256(leaves[0])

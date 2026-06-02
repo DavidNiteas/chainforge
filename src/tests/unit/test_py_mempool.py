@@ -4,7 +4,7 @@ import pytest
 
 
 def test_mempool_insert_and_get():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool()
     tx = Transaction(nonce=1, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=100)
@@ -18,7 +18,7 @@ def test_mempool_insert_and_get():
 
 
 def test_mempool_remove():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool()
     tx = Transaction(nonce=2, gas_price=10, gas_limit=21000, to=b"\x01" * 20, value=100)
@@ -31,7 +31,7 @@ def test_mempool_remove():
 
 
 def test_mempool_priority_queue():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool()
     pool.insert(
@@ -52,7 +52,7 @@ def test_mempool_priority_queue():
 
 
 def test_mempool_nonce_tracking():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool()
     sender = b"\xab" * 20
@@ -67,7 +67,7 @@ def test_mempool_nonce_tracking():
 
 
 def test_mempool_capacity_eviction():
-    from chainforge._internal import Mempool, Transaction
+    from kilnchain._internal import Mempool, Transaction
 
     pool = Mempool(capacity=3)
     pool.insert(

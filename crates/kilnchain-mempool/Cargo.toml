@@ -1,0 +1,13 @@
+[package]
+name = "kilnchain-mempool"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-core = { path = "../kilnchain-core" }
+
+[dev-dependencies]
+proptest = "1.5"

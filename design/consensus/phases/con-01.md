@@ -10,17 +10,17 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-consensus/Cargo.toml` | crate 配置 |
-| `crates/chainforge-consensus/src/lib.rs` | 模块导出 |
-| `crates/chainforge-consensus/src/vote.rs` | `Vote`、`QuorumCertificate` |
-| `crates/chainforge-consensus/src/block_tree.rs` | `BlockTree` 分叉管理 |
-| `crates/chainforge-consensus/src/safety.rs` | 安全规则（锁定、提交） |
+| `crates/kilnchain-consensus/Cargo.toml` | crate 配置 |
+| `crates/kilnchain-consensus/src/lib.rs` | 模块导出 |
+| `crates/kilnchain-consensus/src/vote.rs` | `Vote`、`QuorumCertificate` |
+| `crates/kilnchain-consensus/src/block_tree.rs` | `BlockTree` 分叉管理 |
+| `crates/kilnchain-consensus/src/safety.rs` | 安全规则（锁定、提交） |
 
 ### 测试
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-consensus/src/block_tree.rs` (内联测试) | 区块插入、QC 形成、提交 |
+| `crates/kilnchain-consensus/src/block_tree.rs` (内联测试) | 区块插入、QC 形成、提交 |
 
 ## 核心代码规格
 
@@ -91,7 +91,7 @@ impl SafetyRules {
 
 ## 验收标准
 
-- [ ] `cargo test -p chainforge-consensus` 通过
+- [ ] `cargo test -p kilnchain-consensus` 通过
 - [ ] 能构建 5 个区块的链并依次提交
 - [ ] 分叉场景下，只提交拥有最强 QC 的分支
 - [ ] 对无有效父 QC 的区块拒绝投票

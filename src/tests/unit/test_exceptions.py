@@ -3,15 +3,15 @@
 import pytest
 
 
-def test_chainforge_error_importable():
-    """ChainforgeError 应能从 _internal 模块导入。"""
-    from chainforge._internal import ChainforgeError
+def test_kilnchain_error_importable():
+    """KilnchainError 应能从 _internal 模块导入。"""
+    from kilnchain._internal import KilnchainError
 
-    assert ChainforgeError is not None
+    assert KilnchainError is not None
 
 
 def test_invalid_parameter_is_value_error():
-    from chainforge._internal import raise_invalid_parameter
+    from kilnchain._internal import raise_invalid_parameter
 
     with pytest.raises(ValueError) as exc_info:
         raise_invalid_parameter("negative amount")
@@ -19,7 +19,7 @@ def test_invalid_parameter_is_value_error():
 
 
 def test_serialization_is_value_error():
-    from chainforge._internal import raise_serialization
+    from kilnchain._internal import raise_serialization
 
     with pytest.raises(ValueError) as exc_info:
         raise_serialization("unexpected EOF")
@@ -27,7 +27,7 @@ def test_serialization_is_value_error():
 
 
 def test_crypto_is_runtime_error():
-    from chainforge._internal import raise_crypto
+    from kilnchain._internal import raise_crypto
 
     with pytest.raises(RuntimeError) as exc_info:
         raise_crypto("bad signature")
@@ -35,7 +35,7 @@ def test_crypto_is_runtime_error():
 
 
 def test_storage_is_runtime_error():
-    from chainforge._internal import raise_storage
+    from kilnchain._internal import raise_storage
 
     with pytest.raises(RuntimeError) as exc_info:
         raise_storage("disk full")
@@ -43,7 +43,7 @@ def test_storage_is_runtime_error():
 
 
 def test_state_root_mismatch_contains_expected_and_actual():
-    from chainforge._internal import raise_state_root_mismatch
+    from kilnchain._internal import raise_state_root_mismatch
 
     with pytest.raises(RuntimeError) as exc_info:
         raise_state_root_mismatch("0xabc", "0xdef")

@@ -1,5 +1,5 @@
 [workspace]
-name = "chainforge"
+name = "kilnchain"
 version = "0.1.0"
 description = "High-performance blockchain core library with Python bindings"
 authors = ["David Niteas <david.ql.d@foxmail.com>"]
@@ -23,6 +23,6 @@ dev-build = "maturin develop --release"
 test-rust = "cargo test --workspace"
 test-py = "pytest src/tests -v --tb=short"
 test = { depends-on = ["test-rust", "test-py"] }
-typecheck = "mypy src/chainforge"
+typecheck = "mypy src/kilnchain"
 fmt = "cargo fmt && ruff format src/"
 bench = "cargo bench --workspace"

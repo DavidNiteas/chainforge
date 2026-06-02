@@ -1,16 +1,16 @@
 [workspace]
 members = [
-    "crates/chainforge-error",
-    "crates/chainforge-core",
-    "crates/chainforge-crypto",
-    "crates/chainforge-storage",
-    "crates/chainforge-py",
-    "crates/chainforge-p2p",
-    "crates/chainforge-mempool",
-    "crates/chainforge-block-producer",
-    "crates/chainforge-consensus",
-    "crates/chainforge-evm",
-    "crates/chainforge-rpc",
+    "crates/kilnchain-error",
+    "crates/kilnchain-core",
+    "crates/kilnchain-crypto",
+    "crates/kilnchain-storage",
+    "crates/kilnchain-py",
+    "crates/kilnchain-p2p",
+    "crates/kilnchain-mempool",
+    "crates/kilnchain-block-producer",
+    "crates/kilnchain-consensus",
+    "crates/kilnchain-evm",
+    "crates/kilnchain-rpc",
 ]
 resolver = "2"
 
@@ -18,7 +18,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/your-org/chainforge"
+repository = "https://github.com/DavidNiteas/kilnchain"
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }

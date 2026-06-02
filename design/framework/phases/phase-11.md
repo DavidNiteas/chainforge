@@ -18,9 +18,9 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-crypto/benches/sign_bench.rs` | Secp256k1 签名/验签吞吐量 |
-| `crates/chainforge-core/benches/merkle_bench.rs` | Merkle 根计算延迟（1/10/100/1000/10000 叶子） |
-| `crates/chainforge-storage/benches/rocksdb_bench.rs` | 随机读写 IOPS |
+| `crates/kilnchain-crypto/benches/sign_bench.rs` | Secp256k1 签名/验签吞吐量 |
+| `crates/kilnchain-core/benches/merkle_bench.rs` | Merkle 根计算延迟（1/10/100/1000/10000 叶子） |
+| `crates/kilnchain-storage/benches/rocksdb_bench.rs` | 随机读写 IOPS |
 
 ### 文档
 
@@ -138,7 +138,7 @@ Phase 01 ~ Phase 10 全部完成
 
 ## 里程碑
 
-至此，Chainforge v0.1.0 完成，具备：
+至此，Kilnchain v0.1.0 完成，具备：
 - 完整的 Rust 核心库（密码学、数据结构、存储）
 - Python 绑定与高层 API
 - 跨平台 CI/CD 与自动化测试

@@ -2,7 +2,7 @@
 
 import pytest
 
-from chainforge import (
+from kilnchain import (
     Message,
     Node,
     NodeConfig,
@@ -71,7 +71,7 @@ class TestMessage:
         assert decoded.is_transaction
 
     def test_message_decode_transaction(self) -> None:
-        from chainforge import Transaction
+        from kilnchain import Transaction
 
         tx = Transaction(
             nonce=1,

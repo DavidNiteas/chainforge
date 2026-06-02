@@ -12,18 +12,18 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-core/src/lib.rs` | 导出 `tx`, `block` 模块 |
-| `crates/chainforge-core/src/tx.rs` | `Transaction` 结构及方法 |
-| `crates/chainforge-core/src/block.rs` | `BlockHeader`, `Block` 结构及方法 |
-| `crates/chainforge-core/src/rlp.rs` | RLP 编码器/解码器（基础实现） |
+| `crates/kilnchain-core/src/lib.rs` | 导出 `tx`, `block` 模块 |
+| `crates/kilnchain-core/src/tx.rs` | `Transaction` 结构及方法 |
+| `crates/kilnchain-core/src/block.rs` | `BlockHeader`, `Block` 结构及方法 |
+| `crates/kilnchain-core/src/rlp.rs` | RLP 编码器/解码器（基础实现） |
 
 ### 测试
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-core/src/tx.rs` (内联测试) | Transaction 往返、哈希、恢复发送方 |
-| `crates/chainforge-core/src/block.rs` (内联测试) | Block 往返、header 哈希 |
-| `crates/chainforge-core/src/rlp.rs` (内联测试) | RLP 基础类型编解码 |
+| `crates/kilnchain-core/src/tx.rs` (内联测试) | Transaction 往返、哈希、恢复发送方 |
+| `crates/kilnchain-core/src/block.rs` (内联测试) | Block 往返、header 哈希 |
+| `crates/kilnchain-core/src/rlp.rs` (内联测试) | RLP 基础类型编解码 |
 
 ---
 
@@ -51,9 +51,9 @@ pub struct Transaction {
 | 方法 | 签名 | 说明 |
 |------|------|------|
 | `hash` | `fn hash(&self) -> [u8; 32]` | RLP 编码后 Keccak-256 |
-| `recover_sender` | `fn recover_sender(&self) -> Result<[u8; 20], ChainforgeError>` | ECDSA 公钥恢复 → 取后 20 字节 |
+| `recover_sender` | `fn recover_sender(&self) -> Result<[u8; 20], KilnchainError>` | ECDSA 公钥恢复 → 取后 20 字节 |
 | `encode_rlp` | `fn encode_rlp(&self) -> Vec<u8>` | 完整 RLP 编码 |
-| `decode_rlp` | `fn decode_rlp(data: &[u8]) -> Result<Self, ChainforgeError>` | RLP 解码 |
+| `decode_rlp` | `fn decode_rlp(data: &[u8]) -> Result<Self, KilnchainError>` | RLP 解码 |
 
 ### BlockHeader
 
@@ -96,7 +96,7 @@ pub struct Block {
 
 ## 验收标准（必须全部通过）
 
-- [ ] `cargo test -p chainforge-core` 全部通过
+- [ ] `cargo test -p kilnchain-core` 全部通过
 - [ ] Transaction RLP 往返：`decode(encode(tx)) == tx`
 - [ ] `hash()` 返回 32 字节
 - [ ] `recover_sender` 对有效签名返回正确的 20 字节地址（使用已知私钥构造交易验证）

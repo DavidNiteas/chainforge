@@ -1,8 +1,8 @@
-# Chainforge Python API 扩展设计文档
+# Kilnchain Python API 扩展设计文档
 
 > **版本**：v0.1.0-draft  
 > **日期**：2026-05-30  
-> **目标**：将 Chainforge 全部 Rust 子系统通过 PyO3 暴露为 Python API，使 Python 成为 Rust 核心库的表达层（Skin），而非逻辑层。
+> **目标**：将 Kilnchain 全部 Rust 子系统通过 PyO3 暴露为 Python API，使 Python 成为 Rust 核心库的表达层（Skin），而非逻辑层。
 
 ---
 
@@ -19,7 +19,7 @@
 
 ### 1.2 与 Polars 的对照
 
-| Polars | Chainforge (目标) |
+| Polars | Kilnchain (目标) |
 |--------|-------------------|
 | `pl.DataFrame(...).filter(...).group_by(...).agg(...)` | `cf.mempool().insert(tx).pop_highest(100).build_block(...)` |
 | 计算图在 Rust 中构建与执行 | 区块链操作在 Rust 中构建与执行 |
@@ -32,7 +32,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ Layer 3: Application DSL (src/chainforge/)                           │
+│ Layer 3: Application DSL (src/kilnchain/)                           │
 │                                                                      │
 │   node    = cf.NodeBuilder().with_mempool(...).with_evm(...).build() │
 │   result  = await node.run()                                         │
@@ -41,12 +41,12 @@
 │   # 合约交互（链式表达式）                                              │
 │   result = cf.vm(state).deploy(bytecode).call(calldata).collect()    │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Layer 2: Pythonic Wrappers (src/chainforge/wrappers/)                │
+│ Layer 2: Pythonic Wrappers (src/kilnchain/wrappers/)                │
 │                                                                      │
 │   对 Layer 1 的薄包装：添加类型注解、文档字符串、                         │
 │   上下文管理器、异常细化、异步生成器适配。                                │
 ├──────────────────────────────────────────────────────────────────────┤
-│ Layer 1: PyO3 Raw Bindings (crates/chainforge-py/src/)               │
+│ Layer 1: PyO3 Raw Bindings (crates/kilnchain-py/src/)               │
 │                                                                      │
 │   #[pyclass] / #[pymethods] / #[pyfunction]                          │
 │   直接映射 Rust 公共 API。所有 PyO3 代码集中在此 crate。                 │
@@ -62,19 +62,19 @@
 
 | Rust Crate | 当前暴露 | Phase A | Phase B | Phase C | Phase D |
 |-----------|---------|---------|---------|---------|---------|
-| `chainforge-crypto` | SecretKey, PublicKey | +Hash 函数 | — | — | — |
-| `chainforge-core` | Tx, Header, MerkleTree | +Block, +LightClient | +MPT | — | — |
-| `chainforge-storage` | InMemoryStorage | +CachedStorage | +RocksDBEngine | — | — |
-| `chainforge-mempool` | ❌ | Mempool | — | — | — |
-| `chainforge-block-producer` | ❌ | BlockBuilder, produce_block | — | — | — |
-| `chainforge-evm` | ❌ | EvmExecutor, EvmState | — | — | +Contract DSL |
-| `chainforge-consensus` | ❌ | — | ConsensusEngine | +Vote/QC/Phase | — |
-| `chainforge-p2p` | ❌ | — | — | Node, Message, Transport | +Sync/Gossip |
-| `chainforge-rpc` | ❌ | — | — | RpcState, RpcServer | +EventBus |
+| `kilnchain-crypto` | SecretKey, PublicKey | +Hash 函数 | — | — | — |
+| `kilnchain-core` | Tx, Header, MerkleTree | +Block, +LightClient | +MPT | — | — |
+| `kilnchain-storage` | InMemoryStorage | +CachedStorage | +RocksDBEngine | — | — |
+| `kilnchain-mempool` | ❌ | Mempool | — | — | — |
+| `kilnchain-block-producer` | ❌ | BlockBuilder, produce_block | — | — | — |
+| `kilnchain-evm` | ❌ | EvmExecutor, EvmState | — | — | +Contract DSL |
+| `kilnchain-consensus` | ❌ | — | ConsensusEngine | +Vote/QC/Phase | — |
+| `kilnchain-p2p` | ❌ | — | — | Node, Message, Transport | +Sync/Gossip |
+| `kilnchain-rpc` | ❌ | — | — | RpcState, RpcServer | +EventBus |
 
 ### 3.2 各模块详细映射
 
-#### 3.2.1 chainforge-crypto（Phase PA-01）
+#### 3.2.1 kilnchain-crypto（Phase PA-01）
 
 新增 PyFunction：
 
@@ -84,7 +84,7 @@
 #[pyfunction] fn ripemd160(data: &[u8]) -> [u8; 20]
 ```
 
-#### 3.2.2 chainforge-core（Phase PA-01）
+#### 3.2.2 kilnchain-core（Phase PA-01）
 
 | Rust 类型 | Python 类名 | 暴露方法 |
 |-----------|------------|---------|
@@ -92,7 +92,7 @@
 | `LightClient` | `LightClient` | `add_header()`, `verify_tx_inclusion()` |
 | `MptProof` | `MptProof` | `verify()` |
 
-#### 3.2.3 chainforge-storage（Phase PA-01 + PA-02）
+#### 3.2.3 kilnchain-storage（Phase PA-01 + PA-02）
 
 | Rust 类型 | Python 类名 | 暴露方法 |
 |-----------|------------|---------|
@@ -101,10 +101,10 @@
 
 > RocksDBEngine 为可选 feature `rocksdb-backend`，PyO3 侧需做 feature-gate 或运行时检测。
 
-#### 3.2.4 chainforge-mempool（Phase PA-01）
+#### 3.2.4 kilnchain-mempool（Phase PA-01）
 
 ```python
-from chainforge import Mempool, Transaction
+from kilnchain import Mempool, Transaction
 
 pool = Mempool.with_capacity(10000)
 pool.insert(tx)
@@ -119,10 +119,10 @@ pool.next_nonce(sender)  # -> int
 pool.is_nonce_valid(tx)  # -> bool
 ```
 
-#### 3.2.5 chainforge-block-producer（Phase PA-01）
+#### 3.2.5 kilnchain-block-producer（Phase PA-01）
 
 ```python
-from chainforge import BlockBuilder, Block, produce_block
+from kilnchain import BlockBuilder, Block, produce_block
 
 # Builder 模式
 block = (
@@ -145,12 +145,12 @@ block = produce_block(
 )
 ```
 
-#### 3.2.6 chainforge-evm（Phase PA-01 + PA-06）
+#### 3.2.6 kilnchain-evm（Phase PA-01 + PA-06）
 
 **Phase PA-01 —— 底层暴露：**
 
 ```python
-from chainforge import EvmState, EvmExecutor, Address
+from kilnchain import EvmState, EvmExecutor, Address
 
 state = EvmState()
 state.set_balance(address, 10**18)
@@ -169,7 +169,7 @@ nonce = executor.nonce(address)
 **Phase PA-06 —— Contract DSL（链式表达式）：**
 
 ```python
-from chainforge import vm
+from kilnchain import vm
 
 # 方式一：链式配置 + 批量执行
 counter = (
@@ -191,10 +191,10 @@ count = await contract.get_count()
 
 > **关键约束**：`Contract` 对象的所有方法调用最终都转换为 Rust 侧的 `EvmExecutor.call()`，Python 不介入 ABI 编解码逻辑（除非 ABI 解析本身也在 Rust 中完成）。
 
-#### 3.2.7 chainforge-consensus（Phase PA-02 + PA-03）
+#### 3.2.7 kilnchain-consensus（Phase PA-02 + PA-03）
 
 ```python
-from chainforge import (
+from kilnchain import (
     ConsensusEngine, BlockTree, Vote, QuorumCertificate,
     Phase, SafetyRules, Pacemaker, LeaderRotator,
 )
@@ -226,12 +226,12 @@ leader = engine.pacemaker.current_leader()
 is_leader = engine.pacemaker.is_leader()
 ```
 
-#### 3.2.8 chainforge-p2p（Phase PA-03 + PA-04）
+#### 3.2.8 kilnchain-p2p（Phase PA-03 + PA-04）
 
 **核心约束**：P2P Node 的消息处理逻辑完全在 Rust 内部。Python 不参与任何消息处理回调。
 
 ```python
-from chainforge import Node, NodeConfig, Message, PeerId, PeerInfo
+from kilnchain import Node, NodeConfig, Message, PeerId, PeerInfo
 
 config = NodeConfig(static_key=my_key, gossip_fanout=5, gossip_ttl_secs=60)
 node = Node(config)
@@ -259,10 +259,10 @@ for msg in msgs:
 
 > **设计说明**：`Node` 内部维护一个 `VecDeque<Message>` 作为收件箱。Rust 的 `handle_message()` 将符合条件的消息推入此队列。Python 通过 `drain_inbox()` 批量拉取。这是"拉取模式"（Pull）而非"回调模式"（Push），符合"Python 是皮"的原则。
 
-#### 3.2.9 chainforge-rpc（Phase PA-03 + PA-04）
+#### 3.2.9 kilnchain-rpc（Phase PA-03 + PA-04）
 
 ```python
-from chainforge import RpcServer, RpcState
+from kilnchain import RpcServer, RpcState
 
 state = RpcState(
     chain_id=1337,
@@ -329,20 +329,20 @@ msg = await node.wait_for_message(timeout=5.0)
 
 | Rust 错误变体 | Python 异常类 | 父类 |
 |--------------|--------------|------|
-| `InvalidParameter` | `ChainforgeValueError` | `ValueError` |
-| `Serialization` | `ChainforgeValueError` | `ValueError` |
-| `Crypto` | `ChainforgeCryptoError` | `RuntimeError` |
-| `Storage` | `ChainforgeStorageError` | `RuntimeError` |
-| `StateRootMismatch` | `ChainforgeStateError` | `RuntimeError` |
-| 其他 / 新增 | `ChainforgeRuntimeError` | `RuntimeError` |
+| `InvalidParameter` | `KilnchainValueError` | `ValueError` |
+| `Serialization` | `KilnchainValueError` | `ValueError` |
+| `Crypto` | `KilnchainCryptoError` | `RuntimeError` |
+| `Storage` | `KilnchainStorageError` | `RuntimeError` |
+| `StateRootMismatch` | `KilnchainStateError` | `RuntimeError` |
+| 其他 / 新增 | `KilnchainRuntimeError` | `RuntimeError` |
 
 ```python
-from chainforge import (
-    ChainforgeValueError,
-    ChainforgeCryptoError,
-    ChainforgeStorageError,
-    ChainforgeStateError,
-    ChainforgeRuntimeError,
+from kilnchain import (
+    KilnchainValueError,
+    KilnchainCryptoError,
+    KilnchainStorageError,
+    KilnchainStateError,
+    KilnchainRuntimeError,
 )
 ```
 
@@ -364,14 +364,14 @@ from chainforge import (
 **目标**：暴露链的"数据层"与"构建层"。
 
 **任务清单**：
-1. `chainforge-py/src/crypto.rs`：新增 `sha256`, `ripemd160` PyFunction。
-2. `chainforge-py/src/types.rs`：新增 `PyBlock`, `PyLightClient`, `PyMptProof`。
-3. `chainforge-py/src/storage.rs`：新增 `PyCachedStorage`, `PyRocksDBEngine`（feature-gate）。
-4. `chainforge-py/src/mempool.rs`（新建）：暴露 `PyMempool`。
-5. `chainforge-py/src/block_producer.rs`（新建）：暴露 `PyBlockBuilder`, `produce_block`。
-6. `chainforge-py/src/lib.rs`：注册新增类与函数；细化异常映射。
-7. `src/chainforge/__init__.py`：重新导出新增公共 API。
-8. `src/chainforge/wrappers/`：添加 Pythonic 包装（类型注解、文档）。
+1. `kilnchain-py/src/crypto.rs`：新增 `sha256`, `ripemd160` PyFunction。
+2. `kilnchain-py/src/types.rs`：新增 `PyBlock`, `PyLightClient`, `PyMptProof`。
+3. `kilnchain-py/src/storage.rs`：新增 `PyCachedStorage`, `PyRocksDBEngine`（feature-gate）。
+4. `kilnchain-py/src/mempool.rs`（新建）：暴露 `PyMempool`。
+5. `kilnchain-py/src/block_producer.rs`（新建）：暴露 `PyBlockBuilder`, `produce_block`。
+6. `kilnchain-py/src/lib.rs`：注册新增类与函数；细化异常映射。
+7. `src/kilnchain/__init__.py`：重新导出新增公共 API。
+8. `src/kilnchain/wrappers/`：添加 Pythonic 包装（类型注解、文档）。
 9. 补充 Python 单元测试（`test_py_mempool.py`, `test_py_block.py`, `test_py_evm.py` 等）。
 
 **验收标准**：
@@ -387,10 +387,10 @@ from chainforge import (
 **目标**：暴露 EVM 执行能力。
 
 **任务清单**：
-1. `chainforge-py/src/evm.rs`（新建）：暴露 `PyEvmState`, `PyEvmExecutor`, `PyExecutionResult`。
+1. `kilnchain-py/src/evm.rs`（新建）：暴露 `PyEvmState`, `PyEvmExecutor`, `PyExecutionResult`。
 2. 映射 `revm::primitives::Address` 为 Python `bytes`（20 字节）。
 3. 映射 `revm::primitives::U256` 为 Python `int`。
-4. `src/chainforge/vm.py`（新建）：Layer 2/3 包装，提供 `vm.state()`, `vm.executor()` 入口。
+4. `src/kilnchain/vm.py`（新建）：Layer 2/3 包装，提供 `vm.state()`, `vm.executor()` 入口。
 
 **验收标准**：
 - Python 侧可完成：创建 EvmState → 设置余额/Nonce → 转账 → 部署合约 → 调用合约 → 查询状态。
@@ -403,11 +403,11 @@ from chainforge import (
 **目标**：暴露 HotStuff 共识全部类型。
 
 **任务清单**：
-1. `chainforge-py/src/consensus.rs`（新建）：暴露 `PyConsensusEngine`, `PyBlockTree`, `PyVote`, `PyQuorumCertificate`, `PyPhase`, `PySafetyRules`, `PyPacemaker`, `PyLeaderRotator`, `PyBlockNode`。
-2. 映射 `chainforge_crypto::ecdsa::PublicKey` / `Signature`（Vote 中通过 `voter` / `signature` / `recovery_id` getter 暴露为 bytes）。
+1. `kilnchain-py/src/consensus.rs`（新建）：暴露 `PyConsensusEngine`, `PyBlockTree`, `PyVote`, `PyQuorumCertificate`, `PyPhase`, `PySafetyRules`, `PyPacemaker`, `PyLeaderRotator`, `PyBlockNode`。
+2. 映射 `kilnchain_crypto::ecdsa::PublicKey` / `Signature`（Vote 中通过 `voter` / `signature` / `recovery_id` getter 暴露为 bytes）。
 3. `BlockTree.committed_blocks()` 在绑定层通过 `clone()` 解决引用生命周期问题。
 4. `types.rs`：为 `PyBlock` 补充 `compute_txs_root()` 方法，供 Python 侧在构造测试区块时使用。
-5. `chainforge-consensus`：为 `BlockTree`, `SafetyRules`, `Pacemaker`, `LeaderRotator` 添加 `#[derive(Clone)]`，支持 Python getter 返回独立副本。
+5. `kilnchain-consensus`：为 `BlockTree`, `SafetyRules`, `Pacemaker`, `LeaderRotator` 添加 `#[derive(Clone)]`，支持 Python getter 返回独立副本。
 
 **验收标准**：
 - Python 侧可复现 Rust 侧 `test_full_pipeline` 测试：提议 → 投票 → 形成 QC → Prepare → PreCommit → Commit。
@@ -421,11 +421,11 @@ from chainforge import (
 **目标**：暴露 P2P Node，支持消息处理与拉取。
 
 **任务清单**：
-1. `chainforge-py/src/p2p.rs`（新建）：暴露 `PyNode`, `PyNodeConfig`, `PyMessage`, `PyPeerId`, `PyPeerInfo`, `PyRoutingTable`。
+1. `kilnchain-py/src/p2p.rs`（新建）：暴露 `PyNode`, `PyNodeConfig`, `PyMessage`, `PyPeerId`, `PyPeerInfo`, `PyRoutingTable`。
 2. 在 Rust 侧为 `Node` 添加内部收件箱队列（`VecDeque<Message>`），支持 `drain_inbox()` 和 `push_inbox()`。
 3. `handle_message()` / `gossip_targets()` / `drain_inbox()` / `routing_table()` 通过 `future_into_py` 暴露为 async。
-4. `chainforge-p2p/src/node.rs`：为 `Node` 添加 `#[derive(Clone)]`（基于 `Arc` 字段）。
-5. `chainforge-p2p/src/discovery.rs`：为 `KBucket` 和 `RoutingTable` 添加 `#[derive(Clone)]`。
+4. `kilnchain-p2p/src/node.rs`：为 `Node` 添加 `#[derive(Clone)]`（基于 `Arc` 字段）。
+5. `kilnchain-p2p/src/discovery.rs`：为 `KBucket` 和 `RoutingTable` 添加 `#[derive(Clone)]`。
 
 **验收标准**：
 - Python 侧可创建 Node，发送/接收 Message，通过 `drain_inbox()` 拉取消息。
@@ -439,7 +439,7 @@ from chainforge import (
 **目标**：暴露 RPC Server，支持启动/停止/事件推送。
 
 **任务清单**：
-1. `chainforge-py/src/rpc.rs`（新建）：暴露 `PyRpcState`, `PyRpcServer`。
+1. `kilnchain-py/src/rpc.rs`（新建）：暴露 `PyRpcState`, `PyRpcServer`。
 2. `PyRpcServer.start(host, port)` → 内部 `tokio::spawn(axum::serve(...))`。
 3. `PyRpcServer.stop()` → 触发 graceful shutdown。
 4. 暴露 `publish_new_head()`, `publish_pending_tx()` 供 Python 侧手动推送事件。
@@ -455,9 +455,9 @@ from chainforge import (
 **目标**：提供 Polars 风格的链式 API，将各子系统整合为开箱即用的应用框架。
 
 **任务清单**：
-1. `src/chainforge/node.py`：提供 `NodeBuilder` / `BlockchainNode` 高阶类。
-2. `src/chainforge/vm.py`：提供 `Contract` DSL（预绑定 ABI、链式调用）。
-3. `src/chainforge/events.py`：统一事件总线（基于 `asyncio.Queue` 的 Python 侧事件分发）。
+1. `src/kilnchain/node.py`：提供 `NodeBuilder` / `BlockchainNode` 高阶类。
+2. `src/kilnchain/vm.py`：提供 `Contract` DSL（预绑定 ABI、链式调用）。
+3. `src/kilnchain/events.py`：统一事件总线（基于 `asyncio.Queue` 的 Python 侧事件分发）。
 4. 编写示例：`examples/minimal_chain.py`（单节点内存链）、`examples/p2p_network.py`（多节点组网）。
 5. 编写 `examples/contract_counter.py`（部署并调用 Counter 合约）。
 
@@ -471,9 +471,9 @@ from chainforge import (
 ## 八、目录结构变更
 
 ```
-crates/chainforge-py/src/
+crates/kilnchain-py/src/
 ├── lib.rs              # 模块注册、异常映射
-├── error.rs            # ChainforgeError -> PyErr（细化）
+├── error.rs            # KilnchainError -> PyErr（细化）
 ├── types.rs            # PyMerkleTree, PyTransaction, PyBlockHeader, PyBlock, PyLightClient, PyMptProof
 ├── crypto.rs           # PySecretKey, PyPublicKey, hash 函数
 ├── storage.rs          # PyInMemoryStorage, PyCachedStorage, PyRocksDBEngine
@@ -484,7 +484,7 @@ crates/chainforge-py/src/
 ├── p2p.rs              # PyNode, PyNodeConfig, PyMessage...（新建）
 └── rpc.rs              # PyRpcState, PyRpcServer（新建）
 
-src/chainforge/
+src/kilnchain/
 ├── __init__.py
 ├── types.py            # Pydantic 输入模型
 ├── client.py           # open_db()

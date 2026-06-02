@@ -1,10 +1,10 @@
-# Chainforge User Guide
+# Kilnchain User Guide
 
 > [中文版](./README.zh.md)
 
 ## Introduction
 
-**Chainforge** is a high-performance blockchain core library implemented in **Rust**, with **PyO3** bindings for Python. It targets data scientists, quantitative researchers, and blockchain developers who need rapid prototyping — offering familiar Python APIs backed by high-performance Rust primitives.
+**Kilnchain** is a high-performance blockchain core library implemented in **Rust**, with **PyO3** bindings for Python. It targets data scientists, quantitative researchers, and blockchain developers who need rapid prototyping — offering familiar Python APIs backed by high-performance Rust primitives.
 
 ## Core Features
 
@@ -33,8 +33,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/chainforge.git
-cd chainforge
+git clone https://github.com/DavidNiteas/kilnchain.git
+cd kilnchain
 
 # Install dependencies with Pixi (handles both Python + Rust toolchains)
 pixi install
@@ -64,7 +64,7 @@ pixi run typecheck
 ### Python API
 
 ```python
-from chainforge import Transaction, BlockHeader, MerkleTree, SecretKey
+from kilnchain import Transaction, BlockHeader, MerkleTree, SecretKey
 
 # Create a transaction
 tx = Transaction(nonce=0, gas_price=10, gas_limit=21000,
@@ -79,7 +79,7 @@ print("merkle root:", tree.root().hex())
 # ECDSA signing
 sk = SecretKey.random()
 pk = sk.public_key()
-msg = b"hello chainforge"
+msg = b"hello kilnchain"
 sig = sk.sign(msg)
 assert pk.verify(msg, sig)
 ```
@@ -87,8 +87,8 @@ assert pk.verify(msg, sig)
 ### Rust API
 
 ```rust
-use chainforge_core::{Transaction, BlockHeader, MerkleTree};
-use chainforge_crypto::ecdsa::SecretKey;
+use kilnchain_core::{Transaction, BlockHeader, MerkleTree};
+use kilnchain_crypto::ecdsa::SecretKey;
 
 fn main() {
     let tx = Transaction {
@@ -112,26 +112,26 @@ fn main() {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Python Layer (src/chainforge)                              │
+│  Python Layer (src/kilnchain)                              │
 │  ├─ types.py        Pydantic input validation               │
 │  ├─ client.py       High-level API (open_db context mgr)    │
 │  └─ __init__.py     Public re-exports                       │
 ├─────────────────────────────────────────────────────────────┤
-│  PyO3 FFI Layer (crates/chainforge-py)                      │
+│  PyO3 FFI Layer (crates/kilnchain-py)                      │
 │  ├─ PyTransaction / PyBlockHeader / PyMerkleTree            │
 │  ├─ PySecretKey / PyPublicKey                               │
 │  └─ PyStorageEngine (InMemory / RocksDB)                    │
 ├─────────────────────────────────────────────────────────────┤
 │  Rust Core (crates/)                                        │
-│  ├─ chainforge-core      Transactions, blocks, Merkle, RLP  │
-│  ├─ chainforge-crypto    Hashing, signatures                │
-│  ├─ chainforge-storage   KV storage abstraction             │
-│  ├─ chainforge-p2p       Networking layer                   │
-│  ├─ chainforge-mempool   Transaction pool                   │
-│  ├─ chainforge-consensus HotStuff BFT                       │
-│  ├─ chainforge-evm       revm execution engine              │
-│  ├─ chainforge-rpc       JSON-RPC service                   │
-│  └─ chainforge-error     Unified error types                │
+│  ├─ kilnchain-core      Transactions, blocks, Merkle, RLP  │
+│  ├─ kilnchain-crypto    Hashing, signatures                │
+│  ├─ kilnchain-storage   KV storage abstraction             │
+│  ├─ kilnchain-p2p       Networking layer                   │
+│  ├─ kilnchain-mempool   Transaction pool                   │
+│  ├─ kilnchain-consensus HotStuff BFT                       │
+│  ├─ kilnchain-evm       revm execution engine              │
+│  ├─ kilnchain-rpc       JSON-RPC service                   │
+│  └─ kilnchain-error     Unified error types                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -143,7 +143,7 @@ fn main() {
 | `pixi run test` | Run full test suite |
 | `pixi run test-rust` | `cargo test --workspace` |
 | `pixi run test-py` | `pytest src/tests` |
-| `pixi run typecheck` | `mypy src/chainforge` |
+| `pixi run typecheck` | `mypy src/kilnchain` |
 | `pixi run fmt` | `cargo fmt && ruff format` |
 | `pixi run bench` | `cargo bench --workspace` |
 

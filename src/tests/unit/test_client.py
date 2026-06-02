@@ -2,7 +2,7 @@
 
 import pytest
 
-from chainforge.client import open_db
+from kilnchain.client import open_db
 
 
 @pytest.mark.asyncio

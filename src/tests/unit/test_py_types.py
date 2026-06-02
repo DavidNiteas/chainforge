@@ -4,7 +4,7 @@ import pytest
 
 
 def test_transaction_construct():
-    from chainforge._internal import Transaction
+    from kilnchain._internal import Transaction
 
     tx = Transaction(nonce=1, gas_price=10, gas_limit=21000, value=100)
     assert tx.nonce == 1
@@ -14,7 +14,7 @@ def test_transaction_construct():
 
 
 def test_transaction_hash():
-    from chainforge._internal import Transaction
+    from kilnchain._internal import Transaction
 
     tx = Transaction()
     h = tx.hash()
@@ -23,7 +23,7 @@ def test_transaction_hash():
 
 
 def test_transaction_rlp_roundtrip():
-    from chainforge._internal import Transaction
+    from kilnchain._internal import Transaction
 
     tx = Transaction(nonce=5, gas_price=20, value=50)
     encoded = tx.encode_rlp()
@@ -34,7 +34,7 @@ def test_transaction_rlp_roundtrip():
 
 
 def test_blockheader_construct():
-    from chainforge._internal import BlockHeader
+    from kilnchain._internal import BlockHeader
 
     parent = b"\x00" * 32
     state_root = b"\x01" * 32
@@ -56,7 +56,7 @@ def test_blockheader_construct():
 
 
 def test_blockheader_extra_data_too_long():
-    from chainforge._internal import BlockHeader
+    from kilnchain._internal import BlockHeader
 
     with pytest.raises(ValueError):
         BlockHeader(

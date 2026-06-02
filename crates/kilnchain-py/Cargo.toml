@@ -1,0 +1,27 @@
+[package]
+name = "kilnchain-py"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23", features = ["auto-initialize"] }
+pyo3-async-runtimes = { version = "0.23", features = ["tokio-runtime"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
+kilnchain-error = { path = "../kilnchain-error" }
+kilnchain-core = { path = "../kilnchain-core" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
+kilnchain-storage = { path = "../kilnchain-storage" }
+kilnchain-mempool = { path = "../kilnchain-mempool" }
+kilnchain-block-producer = { path = "../kilnchain-block-producer" }
+kilnchain-evm = { path = "../kilnchain-evm" }
+kilnchain-consensus = { path = "../kilnchain-consensus" }
+kilnchain-p2p = { path = "../kilnchain-p2p" }
+revm = { version = "14", default-features = false }
+
+[features]
+default = []
+extension-module = ["pyo3/extension-module"]
+rocksdb-backend = ["kilnchain-storage/rocksdb-backend"]

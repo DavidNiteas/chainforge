@@ -8,7 +8,7 @@ BOB = b"\xbb" * 20
 
 
 def test_evm_transfer():
-    from chainforge._internal import EvmExecutor, EvmState
+    from kilnchain._internal import EvmExecutor, EvmState
 
     state = EvmState()
     state.set_balance(ALICE, 1000)
@@ -23,7 +23,7 @@ def test_evm_transfer():
 
 
 def test_evm_transfer_insufficient_balance():
-    from chainforge._internal import EvmExecutor, EvmState
+    from kilnchain._internal import EvmExecutor, EvmState
 
     state = EvmState()
     state.set_balance(ALICE, 1000)
@@ -35,7 +35,7 @@ def test_evm_transfer_insufficient_balance():
 
 
 def test_evm_deploy():
-    from chainforge._internal import EvmExecutor, EvmState
+    from kilnchain._internal import EvmExecutor, EvmState
 
     # 极简 counter 合约 bytecode:
     # PUSH1 0x00 CALLDATALOAD PUSH1 0x01 ADD PUSH1 0x00 MSTORE PUSH1 0x20 PUSH1 0x00 RETURN
@@ -69,7 +69,7 @@ def test_evm_deploy():
 
 
 def test_evm_state_methods():
-    from chainforge._internal import EvmState
+    from kilnchain._internal import EvmState
 
     state = EvmState()
     # 注意：set_code 会替换整个 AccountInfo（balance 归零），所以先 set_code 再 set_balance
@@ -84,7 +84,7 @@ def test_evm_state_methods():
 
 
 def test_evm_execution_result_properties():
-    from chainforge._internal import EvmExecutor, EvmState
+    from kilnchain._internal import EvmExecutor, EvmState
 
     state = EvmState()
     state.set_balance(ALICE, 1000)

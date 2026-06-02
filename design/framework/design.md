@@ -48,13 +48,13 @@ Pixi 提供跨平台的可复现环境，优于纯 pip 的依赖解析。项目�
 ### 3.1 目录结构
 
 ```
-chainforge/
+kilnchain/
 ├── Cargo.toml                 # Rust workspace 根
 ├── pixi.toml                  # Pixi 项目配置
 ├── pyproject.toml             # Python 包元数据 + maturin 配置
 ├── rust-toolchain.toml        # Rust 工具链锁定
 ├── src/                       # Python 源码包
-│   ├── chainforge/
+│   ├── kilnchain/
 │   │   ├── __init__.py
 │   │   ├── types.py           # Pydantic 模型与类型别名
 │   │   ├── client.py          # 高层 Pythonic API
@@ -64,10 +64,10 @@ chainforge/
 │       ├── integration/
 │       └── conftest.py
 ├── crates/
-│   ├── chainforge-core/       # 纯 Rust 核心：区块、交易、Merkle 树
-│   ├── chainforge-crypto/     # 密码学原语封装
-│   ├── chainforge-storage/    # KV 存储抽象与 RocksDB 实现
-│   └── chainforge-py/         # PyO3 绑定层（唯一依赖 pyo3 的 crate）
+│   ├── kilnchain-core/       # 纯 Rust 核心：区块、交易、Merkle 树
+│   ├── kilnchain-crypto/     # 密码学原语封装
+│   ├── kilnchain-storage/    # KV 存储抽象与 RocksDB 实现
+│   └── kilnchain-py/         # PyO3 绑定层（唯一依赖 pyo3 的 crate）
 └── .github/
     └── workflows/
         └── ci.yml
@@ -77,7 +77,7 @@ chainforge/
 
 ```toml
 [project]
-name = "chainforge"
+name = "kilnchain"
 version = "0.1.0"
 description = "High-performance blockchain primitives with Python bindings"
 authors = ["Your Name <you@example.com>"]
@@ -114,7 +114,7 @@ test-py = { cmd = "pytest src/tests -v --tb=short", depends-on = ["dev-build"] }
 test = { depends-on = ["test-rust", "test-py"] }
 
 # 静态类型检查
-typecheck = { cmd = "mypy src/chainforge" }
+typecheck = { cmd = "mypy src/kilnchain" }
 
 # 格式化（双端）
 fmt = { cmd = "cargo fmt && ruff format src/" }
@@ -144,7 +144,7 @@ requires = ["maturin>=1.7.0"]
 build-backend = "maturin"
 
 [project]
-name = "chainforge"
+name = "kilnchain"
 version = "0.1.0"
 requires-python = ">=3.10"
 classifiers = [
@@ -154,8 +154,8 @@ classifiers = [
 ]
 
 [tool.maturin]
-manifest-path = "crates/chainforge-py/Cargo.toml"
-module-name = "chainforge._internal"
+manifest-path = "crates/kilnchain-py/Cargo.toml"
+module-name = "kilnchain._internal"
 python-source = "src"
 
 [tool.pytest.ini_options]
@@ -167,14 +167,14 @@ testpaths = ["src/tests"]
 
 ## 4. 核心功能模块设计
 
-### 4.1 密码学原语 (`chainforge-crypto`)
+### 4.1 密码学原语 (`kilnchain-crypto`)
 
 - **哈希**：SHA-256, Keccak-256, RIPEMD-160（通过 `ring` 与自研轻量封装）
 - **数字签名**：Secp256k1 ECDSA, Ed25519（公钥恢复、签名聚合基础结构）
 - **Merkle 树**：二叉 SHA-256 Merkle Tree，支持稀疏 Merkle Tree（SMT）扩展接口
 - **密钥派生**：PBKDF2, BIP-39 助记词生成（可选模块）
 
-### 4.2 核心数据结构 (`chainforge-core`)
+### 4.2 核心数据结构 (`kilnchain-core`)
 
 - **交易 (Transaction)**：RLP / 自定义二进制编码，支持 EIP-155 式链 ID 隔离
 - **区块头 (BlockHeader)**：包含难度、nonce、时间戳、extra_data（字节长度限制 32 bytes）
@@ -182,7 +182,7 @@ testpaths = ["src/tests"]
 - **账户状态 (AccountState)**：nonce, balance, storage_root, code_hash（四元组）
 - **状态树 (StateTrie)**：基于 Merkle Patricia Trie 的抽象，后端可插拔
 
-### 4.3 存储层 (`chainforge-storage`)
+### 4.3 存储层 (`kilnchain-storage`)
 
 - **抽象 trait**：`StorageEngine`, `BatchWrite`, `Snapshot`
 - **默认实现**：RocksDB 封装，支持列族（Column Family）隔离：元数据、区块体、状态、索引
@@ -200,11 +200,11 @@ testpaths = ["src/tests"]
 ### 5.1 错误体系（跨语言一致）
 
 ```rust
-// crates/chainforge-core/src/error.rs
+// crates/kilnchain-core/src/error.rs
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ChainforgeError {
+pub enum KilnchainError {
     #[error("cryptographic operation failed: {0}")]
     Crypto(String),
     
@@ -222,11 +222,11 @@ pub enum ChainforgeError {
 }
 
 // 实现 PyO3 自动转换
-impl std::convert::From<<ChainforgeError> for pyo3::PyErr {
-    fn from(err: ChainforgeError) -> pyo3::PyErr {
+impl std::convert::From<<KilnchainError> for pyo3::PyErr {
+    fn from(err: KilnchainError) -> pyo3::PyErr {
         match err {
-            ChainforgeError::Crypto(_) => pyo3::exceptions::PyRuntimeError::new_err(err.to_string()),
-            ChainforgeError::InvalidParameter(_) => pyo3::exceptions::PyValueError::new_err(err.to_string()),
+            KilnchainError::Crypto(_) => pyo3::exceptions::PyRuntimeError::new_err(err.to_string()),
+            KilnchainError::InvalidParameter(_) => pyo3::exceptions::PyValueError::new_err(err.to_string()),
             _ => pyo3::exceptions::PyException::new_err(err.to_string()),
         }
     }
@@ -236,7 +236,7 @@ impl std::convert::From<<ChainforgeError> for pyo3::PyErr {
 ### 5.2 核心类型示例（交易）
 
 ```rust
-// crates/chainforge-core/src/tx.rs
+// crates/kilnchain-core/src/tx.rs
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -259,7 +259,7 @@ impl Transaction {
     }
     
     /// 从裸字节恢复发送地址（ECDSA 公钥恢复）
-    pub fn recover_sender(&self) -> Result<[u8; 20], ChainforgeError> {
+    pub fn recover_sender(&self) -> Result<[u8; 20], KilnchainError> {
         // 实现...
     }
 }
@@ -268,7 +268,7 @@ impl Transaction {
 ### 5.3 Merkle 树实现（属性测试驱动）
 
 ```rust
-// crates/chainforge-core/src/merkle.rs
+// crates/kilnchain-core/src/merkle.rs
 pub struct MerkleTree {
     leaves: Vec<[u8; 32]>,
     layers: Vec<Vec<[u8; 32]>>,
@@ -299,12 +299,12 @@ mod tests {
 
 ---
 
-## 6. PyO3 绑定层设计 (`chainforge-py`)
+## 6. PyO3 绑定层设计 (`kilnchain-py`)
 
 ### 6.1 模块暴露与命名空间
 
 ```rust
-// crates/chainforge-py/src/lib.rs
+// crates/kilnchain-py/src/lib.rs
 use pyo3::prelude::*;
 
 mod crypto;
@@ -320,7 +320,7 @@ fn _internal(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<storage::PyRocksDB>()?;
     
     // 注册异常类型
-    m.add("ChainforgeError", m.py().get_type::<pyo3::exceptions::PyRuntimeError>())?;
+    m.add("KilnchainError", m.py().get_type::<pyo3::exceptions::PyRuntimeError>())?;
     Ok(())
 }
 ```
@@ -328,10 +328,10 @@ fn _internal(m: &Bound<'_, PyModule>) -> PyResult<()> {
 ### 6.2 类型转换与 GIL 管理
 
 ```rust
-// crates/chainforge-py/src/types.rs
+// crates/kilnchain-py/src/types.rs
 use pyo3::prelude::*;
-use chainforge_core::{Transaction, BlockHeader};
-use chainforge_crypto::MerkleTree;
+use kilnchain_core::{Transaction, BlockHeader};
+use kilnchain_crypto::MerkleTree;
 
 #[pyclass(name = "Transaction", frozen)]
 pub struct PyTransaction {
@@ -386,10 +386,10 @@ impl PyTransaction {
 ### 6.3 异步支持（pyo3 0.23+ 原生 async）
 
 ```rust
-// crates/chainforge-py/src/storage.rs
+// crates/kilnchain-py/src/storage.rs
 use pyo3::prelude::*;
 use pyo3_async_runtimes::tokio::future_into_py;
-use chainforge_storage::RocksDBEngine;
+use kilnchain_storage::RocksDBEngine;
 
 #[pyclass]
 pub struct PyRocksDB {
@@ -423,23 +423,23 @@ Python 层不做重逻辑，仅提供：
 3. **异常重导出**：统一异常捕获体验
 
 ```python
-# src/chainforge/__init__.py
-from chainforge._internal import (
+# src/kilnchain/__init__.py
+from kilnchain._internal import (
     Transaction,
     BlockHeader,
     MerkleTree,
     Secp256k1,
     RocksDB,
-    ChainforgeError,
+    KilnchainError,
 )
 
 __all__ = [
     "Transaction", "BlockHeader", "MerkleTree",
-    "Secp256k1", "RocksDB", "ChainforgeError",
+    "Secp256k1", "RocksDB", "KilnchainError",
     "BlockChain", "Account",
 ]
 
-# src/chainforge/types.py
+# src/kilnchain/types.py
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -450,9 +450,9 @@ class TxInput(BaseModel):
     value: int = Field(default=0, ge=0)
     data: bytes = b""
 
-# src/chainforge/client.py（高层封装）
+# src/kilnchain/client.py（高层封装）
 from contextlib import contextmanager
-from chainforge._internal import RocksDB as _RocksDB
+from kilnchain._internal import RocksDB as _RocksDB
 
 @contextmanager
 def open_db(path: str):
@@ -480,7 +480,7 @@ def open_db(path: str):
 **关键测试场景：**
 
 ```rust
-// crates/chainforge-core/src/tests/state_tests.rs
+// crates/kilnchain-core/src/tests/state_tests.rs
 #[test]
 fn test_empty_merkle_root() {
     let tree = MerkleTree::new(vec![]);
@@ -491,7 +491,7 @@ fn test_empty_merkle_root() {
 #[test]
 fn test_signature_roundtrip() {
     let sk = SecretKey::random();
-    let msg = b"hello chainforge";
+    let msg = b"hello kilnchain";
     let sig = sk.sign(msg);
     let pk = sk.public_key();
     assert!(pk.verify(msg, &sig));
@@ -521,7 +521,7 @@ proptest! {
 ```python
 # src/tests/unit/test_crypto.py
 import pytest
-from chainforge import Secp256k1, ChainforgeError
+from kilnchain import Secp256k1, KilnchainError
 
 def test_sign_and_recover():
     sk = Secp256k1.generate_key()
@@ -531,7 +531,7 @@ def test_sign_and_recover():
     assert pk.verify(msg, sig)
     
     # 错误消息应抛出异常
-    with pytest.raises(ChainforgeError):
+    with pytest.raises(KilnchainError):
         pk.verify(b"wrong", sig)
 
 def test_invalid_key_length():
@@ -540,7 +540,7 @@ def test_invalid_key_length():
 
 # src/tests/integration/test_storage.py
 import pytest
-from chainforge import open_db
+from kilnchain import open_db
 import tempfile
 import os
 
@@ -569,7 +569,7 @@ async def test_db_persistence():
 验证 Rust 与 Python 实现（如有）的结果一致性，
 或验证 Rust 内部状态与 Python 视图同步。
 """
-from chainforge import MerkleTree
+from kilnchain import MerkleTree
 import hashlib
 
 def test_merkle_root_against_reference():
@@ -696,7 +696,7 @@ class Transaction:
     
     Examples
     --------
-    >>> from chainforge import Transaction
+    >>> from kilnchain import Transaction
     >>> tx = Transaction(nonce=0, gas_price=20_000_000_000, to=b'\\x00'*20, value=1000)
     >>> len(tx.hash())
     32
@@ -722,7 +722,7 @@ class Transaction:
 
 ```bash
 # 1. 克隆并进入项目
-git clone https://github.com/your-org/chainforge.git && cd chainforge
+git clone https://github.com/your-org/kilnchain.git && cd kilnchain
 
 # 2. 安装 Pixi 环境（自动安装 Python 依赖）
 pixi install

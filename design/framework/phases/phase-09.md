@@ -12,10 +12,10 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-py/src/lib.rs` | `_internal` 模块注册所有类 |
-| `crates/chainforge-py/src/types.rs` | `PyTransaction`, `PyBlockHeader`, `PyMerkleTree` |
-| `crates/chainforge-py/src/crypto.rs` | `PySecretKey`, `PyPublicKey`, `PySignature` |
-| `crates/chainforge-py/src/storage.rs` | `PyInMemoryStorage`, `PyRocksDB` |
+| `crates/kilnchain-py/src/lib.rs` | `_internal` 模块注册所有类 |
+| `crates/kilnchain-py/src/types.rs` | `PyTransaction`, `PyBlockHeader`, `PyMerkleTree` |
+| `crates/kilnchain-py/src/crypto.rs` | `PySecretKey`, `PyPublicKey`, `PySignature` |
+| `crates/kilnchain-py/src/storage.rs` | `PyInMemoryStorage`, `PyRocksDB` |
 
 ### Python 侧测试
 

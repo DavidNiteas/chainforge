@@ -24,10 +24,10 @@ jobs:
         run: cargo clippy --workspace -- -D warnings
 
       - name: Test
-        run: cargo test --workspace --all-features --exclude chainforge-py
+        run: cargo test --workspace --all-features --exclude kilnchain-py
 
-      - name: Test chainforge-py
-        run: cargo test -p chainforge-py
+      - name: Test kilnchain-py
+        run: cargo test -p kilnchain-py
 
       - name: Build benches
         run: cargo bench --workspace --no-run

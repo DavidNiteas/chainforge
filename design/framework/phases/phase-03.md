@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 `chainforge-crypto` 中实现基础哈希函数：SHA-256、Keccak-256、RIPEMD-160。本阶段**不暴露给 Python**，仅完成纯 Rust 实现 + 测试向量验证 + property test。
+在 `kilnchain-crypto` 中实现基础哈希函数：SHA-256、Keccak-256、RIPEMD-160。本阶段**不暴露给 Python**，仅完成纯 Rust 实现 + 测试向量验证 + property test。
 
 ---
 
@@ -12,14 +12,14 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-crypto/src/lib.rs` | 模块导出 |
-| `crates/chainforge-crypto/src/hash.rs` | `sha256`, `keccak256`, `ripemd160` 实现 |
+| `crates/kilnchain-crypto/src/lib.rs` | 模块导出 |
+| `crates/kilnchain-crypto/src/hash.rs` | `sha256`, `keccak256`, `ripemd160` 实现 |
 
 ### 测试
 
 | 文件 | 说明 |
 |------|------|
-| `crates/chainforge-crypto/src/hash.rs` (内联 `#[cfg(test)]`) | 已知测试向量 + property test |
+| `crates/kilnchain-crypto/src/hash.rs` (内联 `#[cfg(test)]`) | 已知测试向量 + property test |
 
 ---
 
@@ -62,7 +62,7 @@ c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
 
 ## 验收标准（必须全部通过）
 
-- [ ] `cargo test -p chainforge-crypto` 全部通过
+- [ ] `cargo test -p kilnchain-crypto` 全部通过
 - [ ] 空输入 SHA-256 等于 NIST 标准值
 - [ ] 空输入 Keccak-256 等于 Ethereum 标准值
 - [ ] 任意输入的 SHA-256 输出长度恒为 32 字节（proptest 验证）

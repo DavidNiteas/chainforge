@@ -21,17 +21,17 @@
 
 | Crate | 路径 | 说明 |
 |-------|------|------|
-| `chainforge-core` | `crates/chainforge-core/` | 纯 Rust 核心：区块、交易、Merkle 树 |
-| `chainforge-crypto` | `crates/chainforge-crypto/` | 密码学原语 |
-| `chainforge-storage` | `crates/chainforge-storage/` | KV 存储抽象 |
-| `chainforge-py` | `crates/chainforge-py/` | 唯一依赖 pyo3 的绑定层 |
+| `kilnchain-core` | `crates/kilnchain-core/` | 纯 Rust 核心：区块、交易、Merkle 树 |
+| `kilnchain-crypto` | `crates/kilnchain-crypto/` | 密码学原语 |
+| `kilnchain-storage` | `crates/kilnchain-storage/` | KV 存储抽象 |
+| `kilnchain-py` | `crates/kilnchain-py/` | 唯一依赖 pyo3 的绑定层 |
 
 ### Python 包结构
 
 | 文件 | 说明 |
 |------|------|
-| `src/chainforge/__init__.py` | 空文件（占位） |
-| `src/chainforge/py.typed` | PEP 561 类型标记 |
+| `src/kilnchain/__init__.py` | 空文件（占位） |
+| `src/kilnchain/py.typed` | PEP 561 类型标记 |
 | `src/tests/conftest.py` | pytest 共享配置（空） |
 | `src/tests/unit/.gitkeep` | 占位 |
 | `src/tests/integration/.gitkeep` | 占位 |
@@ -45,10 +45,10 @@
 ```toml
 [workspace]
 members = [
-    "crates/chainforge-core",
-    "crates/chainforge-crypto",
-    "crates/chainforge-storage",
-    "crates/chainforge-py",
+    "crates/kilnchain-core",
+    "crates/kilnchain-crypto",
+    "crates/kilnchain-storage",
+    "crates/kilnchain-py",
 ]
 resolver = "2"
 
@@ -56,7 +56,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/your-org/chainforge"
+repository = "https://github.com/your-org/kilnchain"
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }
@@ -64,37 +64,37 @@ thiserror = "1.0"
 anyhow = "1.0"
 ```
 
-### crates/chainforge-core/Cargo.toml
+### crates/kilnchain-core/Cargo.toml
 
 ```toml
 [package]
-name = "chainforge-core"
+name = "kilnchain-core"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
 serde = { workspace = true }
 thiserror = { workspace = true }
-chainforge-crypto = { path = "../chainforge-crypto" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
 
 [dev-dependencies]
 proptest = "1.5"
 ```
 
-### crates/chainforge-py/Cargo.toml
+### crates/kilnchain-py/Cargo.toml
 
 ```toml
 [package]
-name = "chainforge-py"
+name = "kilnchain-py"
 version.workspace = true
 edition.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.23", features = ["extension-module"] }
-chainforge-core = { path = "../chainforge-core" }
-chainforge-crypto = { path = "../chainforge-crypto" }
-chainforge-storage = { path = "../chainforge-storage" }
+kilnchain-core = { path = "../kilnchain-core" }
+kilnchain-crypto = { path = "../kilnchain-crypto" }
+kilnchain-storage = { path = "../kilnchain-storage" }
 ```
 
 ### pyproject.toml (关键段)
@@ -105,8 +105,8 @@ requires = ["maturin>=1.7.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-manifest-path = "crates/chainforge-py/Cargo.toml"
-module-name = "chainforge._internal"
+manifest-path = "crates/kilnchain-py/Cargo.toml"
+module-name = "kilnchain._internal"
 python-source = "src"
 ```
 
@@ -117,7 +117,7 @@ python-source = "src"
 - [ ] `cargo check --workspace` 零错误、零警告
 - [ ] `pixi install` 成功完成环境创建
 - [ ] `pixi run dev-build` 成功编译出 `_internal` 扩展模块
-- [ ] `python -c "import chainforge._internal; print('ok')"` 不报错
+- [ ] `python -c "import kilnchain._internal; print('ok')"` 不报错
 - [ ] 目录结构符合 design.md 中的规划
 
 ---
